@@ -5,6 +5,7 @@ import './App.css';
 // Components
 import ComponentLocator from './components/ComponentLocator';
 import ComponentSearchResults from './components/ComponentSearchResults';
+import SupplierRegistration from './components/SupplierRegistration';
 import { AuthProvider } from './contexts/AuthContext';
 
 function Layout({ children }) {
@@ -27,6 +28,7 @@ function App() {
             <Routes>
               <Route path="/" element={<ComponentLocator />} />
               <Route path="/search" element={<ComponentSearchResults />} />
+              <Route path="/supplier/register" element={<SupplierRegistration />} />
             </Routes>
         </Layout>
       </Router>

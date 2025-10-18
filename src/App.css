@@ -285,6 +285,13 @@ footer {
   cursor: pointer;
 }
 
+tr.ic-small td {
+  font-size: 11px;
+  vertical-align: middle;
+  padding-top: 1px !important;
+  padding-bottom: 1px !important;
+}
+
 .ic-hidden {
   display: none;
 }

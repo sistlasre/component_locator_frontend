@@ -220,7 +220,7 @@ const ComponentSearchResults = () => {
                       </thead>
                       <tbody>
                         {results.map((item, index) => (
-                          <tr key={index}>
+                          <tr key={index} className="ic-small">
                             <td className="fw-bold">{item.mpn}</td>
                             <td>{item.manufacturer}</td>
                             <td>
