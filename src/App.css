@@ -1,0 +1,295 @@
+/* Custom styles for the Inventory Management App */
+
+.App {
+  min-height: 100vh;
+}
+
+/* Custom Bootstrap overrides */
+.btn {
+  border-radius: 6px;
+}
+
+.card {
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+}
+
+.card-header {
+  border-radius: 8px 8px 0 0 !important;
+}
+
+/* Loading spinner styles */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Form styles */
+.form-control:focus {
+  border-color: #6fa5ff;
+  box-shadow: 0 0 0 0.2rem rgba(111, 165, 255, 0.25);
+}
+
+/* Navigation styles */
+.navbar-brand {
+  font-weight: 600;
+}
+
+/* Logo styles */
+.navbar-brand img {
+  transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover img {
+  transform: scale(1.05);
+}
+
+/* Card hover effects */
+.card:hover {
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+  transition: all 0.3s;
+}
+
+/* Alert styles */
+.alert {
+  border-radius: 6px;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #6fa5ff;
+  border-color: #6fa5ff;
+}
+
+.btn-primary:hover {
+  background-color: #5a8fff;
+  border-color: #4579ff;
+}
+
+.btn-success {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+.btn-success:hover {
+  background-color: #047857;
+  border-color: #065f46;
+}
+
+/* Footer styles */
+footer {
+  background-color: #343a40 !important;
+}
+
+/* Project card styles */
+.project-card {
+  transition: all 0.3s ease;
+  border-left: 4px solid #6fa5ff;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Clickable project card styles */
+.project-card-clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.project-card-clickable:hover {
+  background-color: #F9FAFB;
+}
+
+/* Remove text decoration from card links */
+.project-card a.text-decoration-none {
+  color: inherit;
+}
+
+.project-card a.text-decoration-none:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Stats card styles */
+.stats-card {
+  background: linear-gradient(45deg, #6fa5ff, #5a8fff);
+  color: white;
+}
+
+.stats-card .card-body {
+  padding: 1.5rem;
+}
+
+/* Image upload area */
+.upload-area {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+  border-color: #6fa5ff;
+  background-color: #F9FAFB;
+}
+
+.upload-area.dragover {
+  border-color: #6fa5ff;
+  background-color: #F9FAFB;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+/* Companion App Color Utilities */
+.text-primary-tint {
+  color: #6fa5ff !important;
+}
+
+.bg-primary-tint {
+  background-color: #6fa5ff !important;
+}
+
+.text-accent {
+  color: #059669 !important;
+}
+
+.bg-accent {
+  background-color: #059669 !important;
+}
+
+.text-warning-app {
+  color: #D97706 !important;
+}
+
+.bg-warning-app {
+  background-color: #D97706 !important;
+}
+
+.text-error-app {
+  color: #DC2626 !important;
+}
+
+.bg-error-app {
+  background-color: #DC2626 !important;
+}
+
+.text-icon {
+  color: #6B7280 !important;
+}
+
+.bg-card {
+  background-color: #F9FAFB !important;
+}
+
+.border-app {
+  border-color: #E5E7EB !important;
+}
+
+/* Pricing Page Styles */
+.pricing-card {
+  transition: all 0.3s ease;
+  border: 2px solid #E5E7EB;
+}
+
+.pricing-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Pricing badges */
+.pricing-card .badge {
+  font-weight: 500;
+}
+
+/* Pricing feature list */
+.pricing-card ul li {
+  padding: 0.5rem 0;
+}
+
+
+/* FAQ section */
+.pricing-faq h5 {
+  color: #343a40;
+  font-weight: 600;
+}
+
+/* Responsive pricing adjustments */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.5rem;
+  }
+  
+  .display-5 {
+    font-size: 2rem;
+  }
+}
+
+/* Pricing Select Modal Cards */
+.pricing-select-card {
+  transition: all 0.3s ease;
+}
+
+.pricing-select-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-select-card.selected {
+  background-color: #f0f7ff;
+}
+
+.pricing-select-card.current-plan {
+  background-color: #f8f9fa;
+}
+
+/* Button variants matching companion app */
+.btn-accent {
+  background-color: #059669;
+  border-color: #059669;
+  color: white;
+}
+
+.btn-accent:hover {
+  background-color: #047857;
+  border-color: #065f46;
+  color: white;
+}
+
+.btn-warning-app {
+  background-color: #D97706;
+  border-color: #D97706;
+  color: white;
+}
+
+.btn-warning-app:hover {
+  background-color: #B45309;
+  border-color: #92400E;
+  color: white;
+}
+
+.sortable-column:hover {
+  cursor: pointer;
+}
+
+.ic-hidden {
+  display: none;
+}
+
+/* Dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  /* Add dark mode styles here if needed */
+}
