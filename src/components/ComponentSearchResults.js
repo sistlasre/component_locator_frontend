@@ -90,7 +90,7 @@ const ComponentSearchResults = () => {
       let bVal = b[key];
 
       // Handle numeric values
-      if (key === 'in_stock' || key.includes('price') || key.includes('qty')) {
+      if (key === 'qty') {
         aVal = parseFloat(aVal) || 0;
         bVal = parseFloat(bVal) || 0;
       } else if (typeof aVal === 'string') {
@@ -105,10 +105,6 @@ const ComponentSearchResults = () => {
 
     setSortConfig({ key, direction });
     setResults(sorted);
-  };
-
-  const formatPrice = (price) => {
-    return price > 0 ? `$${parseFloat(price).toFixed(2)}` : '-';
   };
 
   const formatQuantity = (qty) => {
@@ -159,7 +155,7 @@ const ComponentSearchResults = () => {
         <Row>
           <Col className="text-center py-5">
             <Spinner animation="border" role="status" className="mb-3" />
-            <p>Searching for components...</p>
+            <p>Searching for parts...</p>
           </Col>
         </Row>
       )}
@@ -178,6 +174,7 @@ const ComponentSearchResults = () => {
 
       {!loading && results.length > 0 && (
         <>
+
           <Row className="mb-3">
             <Col>
               <div className="d-flex justify-content-between align-items-center">
@@ -197,23 +194,18 @@ const ComponentSearchResults = () => {
                     <Table striped hover className="mb-0">
                       <thead className="table-light" style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                         <tr>
-                          <th onClick={() => handleSort('mpn')} style={{ cursor: 'pointer' }}>
-                            MPN {getSortIcon('mpn')}
+                          <th onClick={() => handleSort('part_number')} style={{ cursor: 'pointer' }}>
+                            Part Number {getSortIcon('part_number')}
                           </th>
-                          <th onClick={() => handleSort('manufacturer')} style={{ cursor: 'pointer' }}>
-                            Manufacturer {getSortIcon('manufacturer')}
+                          <th onClick={() => handleSort('mfr')} style={{ cursor: 'pointer' }}>
+                            Manufacturer {getSortIcon('mfr')}
                           </th>
                           <th onClick={() => handleSort('dc')} style={{ cursor: 'pointer' }}>
                             Date Code {getSortIcon('dc')}
                           </th>
-                          <th onClick={() => handleSort('in_stock')} style={{ cursor: 'pointer' }}>
-                            Stock {getSortIcon('in_stock')}
+                          <th onClick={() => handleSort('qty')} style={{ cursor: 'pointer' }}>
+                            Stock {getSortIcon('qty')}
                           </th>
-                          <th>Qty 1</th>
-                          <th>Qty 10</th>
-                          <th>Qty 100</th>
-                          <th>Qty 1K</th>
-                          <th>Qty 10K</th>
                           <th>Description</th>
                           <th>Action</th>
                         </tr>
@@ -221,29 +213,18 @@ const ComponentSearchResults = () => {
                       <tbody>
                         {results.map((item, index) => (
                           <tr key={index} className="ic-small">
-                            <td className="fw-bold">{item.mpn}</td>
-                            <td>{item.manufacturer}</td>
+                            <td className="fw-bold">{item.part_number}</td>
+                            <td>{item.mfr}</td>
                             <td>
                               {item.dc !== 'nan' && item.dc !== 'NaN' ? (
-                                <Badge bg="info">{item.dc}</Badge>
+                                <span>{item.dc}</span>
                               ) : (
                                 <span className="text-muted">-</span>
                               )}
                             </td>
                             <td>
-                              {item.in_stock > 0 ? (
-                                <Badge bg={item.in_stock > 100 ? 'success' : 'warning'}>
-                                  {formatQuantity(item.in_stock)}
-                                </Badge>
-                              ) : (
-                                <Badge bg="danger">Out of Stock</Badge>
-                              )}
+                              {item.qty || 0}
                             </td>
-                            <td>{formatPrice(item.price_a)}</td>
-                            <td>{formatPrice(item.price_b)}</td>
-                            <td>{formatPrice(item.price_c)}</td>
-                            <td>{formatPrice(item.price_d)}</td>
-                            <td>{formatPrice(item.price_e)}</td>
                             <td>
                               {item.description && item.description !== 'NaN' && item.description !== 'nan' ? (
                                 <small className="text-muted">{item.description.substring(0, 50)}...</small>
@@ -274,23 +255,6 @@ const ComponentSearchResults = () => {
             </Col>
           </Row>
 
-          {/* Pricing breakdown legend */}
-          <Row className="mt-3">
-            <Col>
-              <Card className="bg-light">
-                <Card.Body>
-                  <h6>Pricing Tiers:</h6>
-                  <small className="text-muted">
-                    <span className="me-3">Qty 1: 1+ units</span>
-                    <span className="me-3">Qty 10: 10+ units</span>
-                    <span className="me-3">Qty 100: 100+ units</span>
-                    <span className="me-3">Qty 1K: 1,000+ units</span>
-                    <span>Qty 10K: 10,000+ units</span>
-                  </small>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
         </>
       )}
     </Container>

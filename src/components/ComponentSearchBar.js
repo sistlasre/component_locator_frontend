@@ -115,19 +115,15 @@ const ComponentSearchBar = ({
   };
 
   const handleResultClick = (item) => {
-    setSearchValue(item.mpn || item.manufacturer || '');
+    setSearchValue(item.part_number || item.mfr || '');
     setShowResults(false);
     // Navigate to search results with the selected item
     const params = new URLSearchParams({
       search_type: 'exact',
       field: 'mpn',
-      field_value: item.mpn || ''
+      field_value: item.part_number || ''
     });
     navigate(`/search?${params.toString()}`);
-  };
-
-  const formatPrice = (price) => {
-    return price > 0 ? `$${price.toFixed(2)}/ea` : '';
   };
 
   return (
@@ -148,7 +144,7 @@ const ComponentSearchBar = ({
             onChange={(e) => setField(e.target.value)}
             style={{ maxWidth: '150px' }}
           >
-            <option value="mpn">MPN</option>
+            <option value="mpn">Part Number</option>
             <option value="manufacturer">Manufacturer</option>
           </Form.Select>
 
@@ -209,14 +205,9 @@ const ComponentSearchBar = ({
                 >
                   <div className="d-flex justify-content-between align-items-start">
                     <div className="flex-grow-1">
-                      <div className="fw-bold">{item.mpn}</div>
+                      <div className="fw-bold">{item.part_number}</div>
                       <small className="text-muted">
-                        {item.manufacturer} | DC: {item.dc} | Stock: {item.in_stock}
-                      </small>
-                    </div>
-                    <div className="text-end">
-                      <small className="text-primary">
-                        {formatPrice(item.price_a)}
+                        {item.mfr} | DC: {item.dc} | Stock: {item.qty}
                       </small>
                     </div>
                   </div>

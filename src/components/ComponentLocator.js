@@ -6,7 +6,7 @@ const ComponentLocator = () => {
   return (
     <Container fluid className="py-5">
       <Row className="min-vh-50 d-flex align-items-center justify-content-center">
-        <Col xs={12} md={8} lg={6}>
+        <Col xs={12} md={8}>
           <Card className="shadow-lg border-0">
             <Card.Body className="p-5">
               <div className="text-center mb-4">
