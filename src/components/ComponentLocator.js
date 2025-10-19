@@ -4,7 +4,7 @@ import ComponentSearchBar from './ComponentSearchBar';
 
 const ComponentLocator = () => {
   return (
-    <Container fluid className="py-5">
+    <Container fluid className="py-3">
       <Row className="min-vh-50 d-flex align-items-center justify-content-center">
         <Col xs={12} md={8}>
           <Card className="shadow-lg border-0">

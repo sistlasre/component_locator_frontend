@@ -121,20 +121,9 @@ const ComponentSearchResults = () => {
   };
 
   return (
-    <Container fluid className="py-4">
+    <Container fluid className="py-3">
       <Row className="mb-4">
         <Col>
-          <div className="d-flex align-items-center mb-3">
-            <Button 
-              variant="link" 
-              onClick={() => navigate('/')}
-              className="ps-0"
-            >
-              <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-              Back to Component Locator
-            </Button>
-          </div>
-
           <h2 className="mb-3">Component Search Results</h2>
 
           <Card className="shadow-sm mb-4">

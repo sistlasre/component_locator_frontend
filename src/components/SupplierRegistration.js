@@ -106,9 +106,9 @@ const SupplierRegistration = () => {
   };
 
   return (
-    <Container fluid className="py-5">
+    <Container fluid className="py-3">
       <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={6}>
+        <Col xs={12} md={10}>
           <Card className="shadow-lg border-0">
             <Card.Body className="p-5">
               <div className="text-center mb-4">
