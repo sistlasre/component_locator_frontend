@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { apiService } from '../services/apiService';
 
 const SupplierRegistration = () => {
   const navigate = useNavigate();
@@ -69,13 +70,9 @@ const SupplierRegistration = () => {
         payload.fieldMappings = filteredMappings;
       }
 
-      const response = await fetch('https://obkg1pw61g.execute-api.us-west-2.amazonaws.com/prod/supplier/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const response = await apiService.createSupplier(payload);
 
-      if (!response.ok) {
+      if (response.status < 200 || response.status >= 300) {
         throw new Error(`Server responded with status ${response.status}`);
       }
 

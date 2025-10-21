@@ -4,6 +4,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortAsc, faSortDesc, faArrowLeft, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import ComponentSearchBar from './ComponentSearchBar';
+import { apiService } from '../services/apiService';
 
 const ComponentSearchResults = () => {
   const location = useLocation();
@@ -31,20 +32,8 @@ const ComponentSearchResults = () => {
     setError(null);
 
     try {
-      const response = await fetch('https://obkg1pw61g.execute-api.us-west-2.amazonaws.com/prod/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          search_type: searchType,
-          search_source: 'search_page',
-          field: field,
-          field_value: fieldValue
-        })
-      });
-
-      const data = await response.json();
+      const response = await apiService.search(field, fieldValue, searchType, 'search_page');
+      const data = response.data;
 
       if (data.items) {
         // Parse the item strings

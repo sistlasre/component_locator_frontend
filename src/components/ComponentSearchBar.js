@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, InputGroup, Dropdown, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { apiService } from '../services/apiService';
 
 const ComponentSearchBar = ({ 
   onSearch, 
@@ -53,20 +54,9 @@ const ComponentSearchBar = ({
     searchTimeoutRef.current = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://obkg1pw61g.execute-api.us-west-2.amazonaws.com/prod/search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            search_type: searchType,
-            search_source: 'search_bar',
-            field: field,
-            field_value: searchValue
-          })
-        });
+        const response = await apiService.search(field, searchValue, searchType, 'search_bar');
+        const data = response.data;
 
-        const data = await response.json();
         if (data.items) {
           // Parse the item strings and limit to first 10 results
           const parsedItems = data.items.slice(0, 10).map(item => {

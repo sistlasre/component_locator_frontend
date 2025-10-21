@@ -3,11 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 // Components
+import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ComponentLocator from './components/ComponentLocator';
 import ComponentSearchResults from './components/ComponentSearchResults';
 import SupplierRegistration from './components/SupplierRegistration';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function Layout({ children }) {
   return (
@@ -21,15 +24,19 @@ function Layout({ children }) {
 
 function App() {
   return (
+    <AuthProvider>
       <Router>
         <Layout>
             <Routes>
               <Route path="/" element={<ComponentLocator />} />
               <Route path="/search" element={<ComponentSearchResults />} />
               <Route path="/supplier/register" element={<SupplierRegistration />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
             </Routes>
         </Layout>
       </Router>
+    </AuthProvider>
   );
 }
 
