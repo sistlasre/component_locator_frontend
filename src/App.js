@@ -8,7 +8,6 @@ import Footer from './components/Footer';
 import ComponentLocator from './components/ComponentLocator';
 import ComponentSearchResults from './components/ComponentSearchResults';
 import SupplierRegistration from './components/SupplierRegistration';
-import { AuthProvider } from './contexts/AuthContext';
 
 function Layout({ children }) {
   return (
@@ -22,7 +21,6 @@ function Layout({ children }) {
 
 function App() {
   return (
-    <AuthProvider>
       <Router>
         <Layout>
             <Routes>
@@ -32,7 +30,6 @@ function App() {
             </Routes>
         </Layout>
       </Router>
-    </AuthProvider>
   );
 }
 

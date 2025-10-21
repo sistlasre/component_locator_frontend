@@ -53,7 +53,7 @@ const ComponentSearchBar = ({
     searchTimeoutRef.current = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://emev1efipj.execute-api.us-east-1.amazonaws.com/prod/search', {
+        const response = await fetch('https://obkg1pw61g.execute-api.us-west-2.amazonaws.com/prod/search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

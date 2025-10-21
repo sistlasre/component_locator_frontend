@@ -69,7 +69,7 @@ const SupplierRegistration = () => {
         payload.fieldMappings = filteredMappings;
       }
 
-      const response = await fetch('https://emev1efipj.execute-api.us-east-1.amazonaws.com/prod/supplier/create', {
+      const response = await fetch('https://obkg1pw61g.execute-api.us-west-2.amazonaws.com/prod/supplier/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
