@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortAsc, faSortDesc, faArrowLeft, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import ComponentSearchBar from './ComponentSearchBar';
 import { apiService } from '../services/apiService';
+import { useAuth } from '../contexts/AuthContext';
 
 const ComponentSearchResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const {user} = useAuth();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -212,16 +214,24 @@ const ComponentSearchResults = () => {
                               )}
                             </td>
                             <td>
-                              {item.processed_at ? new Date(item.processed_at).toLocaleDateString() : '-'}
+                              {item.processed_at ?
+                                user ?
+                                  new Date(item.processed_at).toLocaleDateString()
+                                  : new Date(item.processed_at).toLocaleDateString().replace(/\d/g, '*')
+                                : '-'
+                              }
                             </td>
                             <td>
-                              {item.country || '-'}
+                              {item.country ?
+                                user ? item.country : '**'
+                                : '-'
+                              }
                             </td>
                             <td>
                               {item.qty || '-'}
                             </td>
                             <td>
-                              {item.supplier || '-'}
+                              {user ? item.suppler_name : '******'}
                             </td>
                           </tr>
                         ))}

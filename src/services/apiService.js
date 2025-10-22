@@ -78,6 +78,10 @@ class ApiService {
     });
   }
 
+  async verifyUser() {
+    return this.api.get('/user/verify');
+  }
+
 }
 
 export const apiService = new ApiService();

@@ -23,9 +23,15 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem('component-locator-user');
         
         if (storedToken && storedUser) {
-          setUser(storedUser);
-          setToken(storedToken);
-          apiService.setAuthToken(storedToken);
+          const isValidSession = (await apiService.verifyUser()).data?.isValidSession;
+          if (isValidSession) {
+            setUser(storedUser);
+            setToken(storedToken);
+            apiService.setAuthToken(storedToken);
+          } else {
+            localStorage.removeItem('component-locator-token');
+            localStorage.removeItem('component-locator-user');
+          }
         }
       } catch (error) {
         console.error('Error loading auth state:', error);
