@@ -67,7 +67,7 @@ const Login = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <FontAwesomeIcon icon={faUser} className="me-2" />
-                    Username
+                    Email
                   </Form.Label>
                   <Form.Control
                     type="text"
@@ -124,11 +124,6 @@ const Login = () => {
               </Form>
 
               <div className="text-center">
-                <p className="mb-2">
-                  <Link to="/forgot-password" className="text-decoration-none">
-                    Forgot your password?
-                  </Link>
-                </p>
                 <p className="mb-0">
                   Don't have an account?{' '}
                   <Link to="/register" className="text-decoration-none">

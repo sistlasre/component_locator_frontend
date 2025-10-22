@@ -11,6 +11,7 @@ import ComponentSearchResults from './components/ComponentSearchResults';
 import SupplierRegistration from './components/SupplierRegistration';
 import Login from './components/Login';
 import Register from './components/Register';
+import LoggedOutRoute from './components/LoggedOutRoute';
 
 function Layout({ children }) {
   return (
@@ -31,8 +32,8 @@ function App() {
               <Route path="/" element={<ComponentLocator />} />
               <Route path="/search" element={<ComponentSearchResults />} />
               <Route path="/supplier/register" element={<SupplierRegistration />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<LoggedOutRoute><Login /></LoggedOutRoute>} />
+              <Route path="/register" element={<LoggedOutRoute><Register /></LoggedOutRoute>} />
             </Routes>
         </Layout>
       </Router>
