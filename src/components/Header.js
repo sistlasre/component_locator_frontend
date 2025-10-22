@@ -18,7 +18,7 @@ const Header = () => {
       <Container fluid>
         <Navbar.Brand as={Link} to="/" className="fw-bold d-flex align-items-center">
           <img 
-            src="/inventory-capture-logo-main.png" 
+            src="/component_locator_logo.png"
             alt="Inventory Capture Logo" 
             height="40"
             className="me-2"
