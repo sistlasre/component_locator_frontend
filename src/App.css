@@ -296,6 +296,13 @@ tr.ic-small td {
   display: none;
 }
 
+tr.no-padding th {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 10px !important;
+  padding-right: 0 !important;
+}
+
 /* Dark mode support (if needed in future) */
 @media (prefers-color-scheme: dark) {
   /* Add dark mode styles here if needed */

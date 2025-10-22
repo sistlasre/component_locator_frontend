@@ -19,8 +19,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadAuthState = async () => {
       try {
-        const storedToken = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
+        const storedToken = localStorage.getItem('component-locator-token');
+        const storedUser = localStorage.getItem('component-locator-user');
         
         if (storedToken && storedUser) {
           setUser(storedUser);
@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error('Error loading auth state:', error);
         // Clear potentially corrupted data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem('component-locator-token');
+        localStorage.removeItem('component-locator-user');
       } finally {
         setLoading(false);
       }
@@ -46,8 +46,8 @@ export const AuthProvider = ({ children }) => {
       const { user, token } = response.data;
       
       // Store both user and token
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', user);
+      localStorage.setItem('component-locator-token', token);
+      localStorage.setItem('component-locator-user', user);
       
       // Update state
       setUser(user);
@@ -77,8 +77,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('component-locator-token');
+    localStorage.removeItem('component-locator-user');
     setUser(null);
     setToken(null);
     apiService.setAuthToken(null);

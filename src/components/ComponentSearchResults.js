@@ -16,7 +16,7 @@ const ComponentSearchResults = () => {
 
   // Parse query parameters
   const queryParams = new URLSearchParams(location.search);
-  const searchType = queryParams.get('search_type') || 'exact';
+  const searchType = queryParams.get('search_type') || 'begins_with';
   const field = queryParams.get('field') || 'mpn';
   const fieldValue = queryParams.get('field_value') || '';
 
@@ -111,11 +111,11 @@ const ComponentSearchResults = () => {
 
   return (
     <Container fluid className="py-3">
-      <Row className="mb-4">
+      <Row className="mb-2">
         <Col>
-          <h2 className="mb-3">Component Search Results</h2>
+          <h2 className="mb-2">Component Search Results</h2>
 
-          <Card className="shadow-sm mb-4">
+          <Card className="shadow-sm">
             <Card.Body>
               <ComponentSearchBar 
                 showDropdown={true}
@@ -171,7 +171,7 @@ const ComponentSearchResults = () => {
                   <div style={{ overflowX: 'auto' }}>
                     <Table striped hover className="mb-0">
                       <thead className="table-light" style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-                        <tr>
+                        <tr className="no-padding">
                           <th onClick={() => handleSort('part_number')} style={{ cursor: 'pointer' }}>
                             Part Number {getSortIcon('part_number')}
                           </th>
@@ -181,47 +181,47 @@ const ComponentSearchResults = () => {
                           <th onClick={() => handleSort('dc')} style={{ cursor: 'pointer' }}>
                             Date Code {getSortIcon('dc')}
                           </th>
-                          <th onClick={() => handleSort('qty')} style={{ cursor: 'pointer' }}>
-                            Stock {getSortIcon('qty')}
-                          </th>
                           <th>Description</th>
-                          <th>Action</th>
+                          <th>Uploaded</th>
+                          <th>Country</th>
+                          <th onClick={() => handleSort('qty')} style={{ cursor: 'pointer' }}>
+                            Quantity {getSortIcon('qty')}
+                          </th>
+                          <th>Supplier</th>
                         </tr>
                       </thead>
                       <tbody>
                         {results.map((item, index) => (
                           <tr key={index} className="ic-small">
                             <td className="fw-bold">{item.part_number}</td>
-                            <td>{item.mfr}</td>
+                            <td>{item.mfr && item.mfr.toLowerCase() !== 'nan' ? item.mfr : '-'}</td>
                             <td>
-                              {item.dc !== 'nan' && item.dc !== 'NaN' ? (
+                              {item.dc && item.dc.toLowerCase() !== 'nan' ? (
                                 <span>{item.dc}</span>
                               ) : (
                                 <span className="text-muted">-</span>
                               )}
                             </td>
                             <td>
-                              {item.qty || 0}
-                            </td>
-                            <td>
-                              {item.description && item.description !== 'NaN' && item.description !== 'nan' ? (
-                                <small className="text-muted">{item.description.substring(0, 50)}...</small>
+                              {item.description && item.description.toLowerCase() !== 'nan' ? (
+                                <small title={item.description} className="text-muted">
+                                    {item.description.length > 50 ? item.description.substring(0, 50) + '...' : item.description}
+                                </small>
                               ) : (
                                 <span className="text-muted">-</span>
                               )}
                             </td>
                             <td>
-                              {item.link && (
-                                <a 
-                                  href={item.link} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="btn btn-sm btn-outline-primary"
-                                  title="View on component search"
-                                >
-                                  <FontAwesomeIcon icon={faExternalLinkAlt} />
-                                </a>
-                              )}
+                              {item.processed_at ? new Date(item.processed_at).toLocaleDateString() : '-'}
+                            </td>
+                            <td>
+                              {item.country || '-'}
+                            </td>
+                            <td>
+                              {item.qty || '-'}
+                            </td>
+                            <td>
+                              {item.supplier || '-'}
                             </td>
                           </tr>
                         ))}

@@ -15,7 +15,7 @@ class ApiService {
     // Request interceptor to add auth token
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('component-locator-token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         } else {
@@ -36,7 +36,7 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('token');
+          localStorage.removeItem('component-locator-token');
         }
         return Promise.reject(error);
       }
