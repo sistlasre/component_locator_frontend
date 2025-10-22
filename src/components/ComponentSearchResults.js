@@ -113,7 +113,7 @@ const ComponentSearchResults = () => {
     <Container fluid className="py-3">
       <Row className="mb-2">
         <Col>
-          <h2 className="mb-2">Component Search Results</h2>
+          <h2 className="mb-2">Components Located:</h2>
 
           <Card className="shadow-sm">
             <Card.Body>
