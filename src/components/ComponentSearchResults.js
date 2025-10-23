@@ -4,6 +4,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortAsc, faSortDesc, faArrowLeft, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import ComponentSearchBar from './ComponentSearchBar';
+import SupplierModal from './SupplierModal';
 import { apiService } from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -15,6 +16,9 @@ const ComponentSearchResults = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [showSupplierModal, setShowSupplierModal] = useState(false);
+  const [selectedSupplierId, setSelectedSupplierId] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   // Parse query parameters
   const queryParams = new URLSearchParams(location.search);
@@ -109,6 +113,18 @@ const ComponentSearchResults = () => {
     return sortConfig.direction === 'asc' 
       ? <FontAwesomeIcon icon={faSortAsc} className="ms-1" />
       : <FontAwesomeIcon icon={faSortDesc} className="ms-1" />;
+  };
+
+  const handleSupplierClick = (supplierId, item) => {
+    setSelectedSupplierId(supplierId);
+    setSelectedItem(item);
+    setShowSupplierModal(true);
+  };
+
+  const handleCloseSupplierModal = () => {
+    setShowSupplierModal(false);
+    setSelectedSupplierId(null);
+    setSelectedItem(null);
   };
 
   return (
@@ -231,7 +247,22 @@ const ComponentSearchResults = () => {
                               {item.qty || '-'}
                             </td>
                             <td>
-                              {user ? item.suppler_name : '******'}
+                              {user ? (
+                                <span 
+                                  onClick={() => handleSupplierClick(item.supplier_id, item)}
+                                  style={{ 
+                                    cursor: 'pointer', 
+                                    color: '#0d6efd',
+                                    textDecoration: 'underline'
+                                  }}
+                                  onMouseEnter={(e) => e.target.style.opacity = '0.7'}
+                                  onMouseLeave={(e) => e.target.style.opacity = '1'}
+                                >
+                                  {item.supplier_name}
+                                </span>
+                              ) : (
+                                '******'
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -245,6 +276,13 @@ const ComponentSearchResults = () => {
 
         </>
       )}
+
+      <SupplierModal 
+        show={showSupplierModal}
+        onHide={handleCloseSupplierModal}
+        supplierId={selectedSupplierId}
+        selectedItem={selectedItem}
+      />
     </Container>
   );
 };

@@ -82,6 +82,10 @@ class ApiService {
     return this.api.get('/user/verify');
   }
 
+  async getSupplierDetails(supplierId) {
+    return this.api.get(`/supplier/${supplierId}`);
+  }
+
 }
 
 export const apiService = new ApiService();

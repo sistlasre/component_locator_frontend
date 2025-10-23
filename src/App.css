@@ -296,6 +296,11 @@ tr.ic-small td {
   display: none;
 }
 
+.custom-modal-width {
+  width: 80vw;
+  max-width: 85vw;
+}
+
 tr.no-padding th {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
