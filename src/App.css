@@ -308,6 +308,14 @@ tr.no-padding th {
   padding-right: 0 !important;
 }
 
+.table-striped tbody tr:nth-of-type(odd) > * {
+  background-color: #ecf3f8; /* Light blue for odd rows */
+}
+
+.table-striped tbody tr:nth-of-type(even) > * {
+  background-color: #fefefe; /* White for even rows */
+}
+
 /* Dark mode support (if needed in future) */
 @media (prefers-color-scheme: dark) {
   /* Add dark mode styles here if needed */

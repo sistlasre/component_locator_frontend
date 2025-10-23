@@ -15,7 +15,7 @@ import LoggedOutRoute from './components/LoggedOutRoute';
 
 function Layout({ children }) {
   return (
-    <div className="App d-flex flex-column min-vh-100" style={{ maxWidth: '90%', margin: 'auto' }}>
+    <div className="App d-flex flex-column min-vh-100" style={{ maxWidth: '90%', margin: 'auto', backgroundColor: '#fff' }}>
       <Header />
       <main className="flex-grow-1">{children}</main>
       <Footer />
