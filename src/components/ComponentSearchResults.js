@@ -70,7 +70,6 @@ const ComponentSearchResults = () => {
           }
         }).filter(item => item !== null);
         setBrokeredResults(parsedBrokered);
-        debugger;
       } else {
         setBrokeredResults([]);
       }

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, InputGroup, Dropdown, Spinner } from 'react-bootstrap';
+import { Form, InputGroup, Dropdown, Spinner, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSave, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 
@@ -8,13 +10,26 @@ const ComponentSearchBar = ({
   showDropdown = true,
   placeholder = "Search for components...",
   initialValue = "",
-  searchType: initialSearchType = "begins_with",
-  field: initialField = "mpn"
+  searchType: initialSearchType,
+  field: initialField
 }) => {
   const navigate = useNavigate();
+
+  // Load saved preferences from localStorage, fallback to props or defaults
+  const getSavedSearchType = () => {
+    if (initialSearchType) return initialSearchType;
+    return localStorage.getItem('defaultSearchType') || 'begins_with';
+  };
+
+  const getSavedField = () => {
+    if (initialField) return initialField;
+    return localStorage.getItem('defaultField') || 'mpn';
+  };
+
   const [searchValue, setSearchValue] = useState(initialValue);
-  const [searchType, setSearchType] = useState(initialSearchType);
-  const [field, setField] = useState(initialField);
+  const [searchType, setSearchType] = useState(getSavedSearchType());
+  const [field, setField] = useState(getSavedField());
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [dropdownResults, setDropdownResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -106,6 +121,13 @@ const ComponentSearchBar = ({
     navigate(`/search?${params.toString()}`);
   };
 
+  const handleSaveDefaults = () => {
+    localStorage.setItem('defaultSearchType', searchType);
+    localStorage.setItem('defaultField', field);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
+  };
+
   return (
     <div className="position-relative" ref={dropdownRef}>
       <Form onSubmit={handleSearch}>
@@ -152,6 +174,16 @@ const ComponentSearchBar = ({
           >
             Search
           </button>
+
+          <Button 
+            variant="outline-secondary"
+            onClick={handleSaveDefaults}
+            title="Save current search type and field as default"
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            <FontAwesomeIcon icon={saveSuccess ? faCheck : faSave} />
+            {saveSuccess ? ' Saved!' : ' Save Defaults'}
+          </Button>
         </InputGroup>
 
         {searchValue.length > 0 && searchValue.length < 3 && (
