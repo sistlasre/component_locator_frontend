@@ -58,17 +58,7 @@ const ComponentSearchBar = ({
         const data = response.data;
 
         if (data.items) {
-          // Parse the item strings and limit to first 10 results
-          const parsedItems = data.items.slice(0, 10).map(item => {
-            try {
-              return JSON.parse(item.item);
-            } catch (e) {
-              console.error('Error parsing item:', e);
-              return null;
-            }
-          }).filter(item => item !== null);
-
-          setDropdownResults(parsedItems);
+          setDropdownResults(data.items);
           setShowResults(true);
         }
       } catch (error) {
@@ -197,7 +187,7 @@ const ComponentSearchBar = ({
                     <div className="flex-grow-1">
                       <div className="fw-bold">{item.part_number}</div>
                       <small className="text-muted">
-                        {item.mfr} | DC: {item.dc} | Stock: {item.qty}
+                        {item.numResults} results
                       </small>
                     </div>
                   </div>
