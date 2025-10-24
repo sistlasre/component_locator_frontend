@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
+import countryList from '../country_list.json';
+import Select from 'react-select';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const SupplierRegistration = () => {
   const navigate = useNavigate();
+  const countryOptions = countryList.map((c) => ({ value: c.country_code, label: c.country }));
 
   const [formData, setFormData] = useState({
     companyName: '',
@@ -14,6 +19,8 @@ const SupplierRegistration = () => {
     description: '',
     contactEmail: '',
     emailForUpload: '',
+    country: '',
+    password: ''
   });
 
   const [mappings, setMappings] = useState({
@@ -22,7 +29,6 @@ const SupplierRegistration = () => {
     'Datecode': '',
     'Description': '',
     'Quantity': '',
-    'Country Code': '',
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -91,8 +97,7 @@ const SupplierRegistration = () => {
         'Manufacturer': '',
         'Datecode': '',
         'Description': '',
-        'Quantity': '',
-        'Country Code': '',
+        'Quantity': ''
       });
     } catch (err) {
       console.error('Submission error:', err);
@@ -129,12 +134,38 @@ const SupplierRegistration = () => {
               <Form onSubmit={handleSubmit}>
                 {/* Supplier Info */}
                 <Form.Group className="mb-3" controlId="companyName">
-                  <Form.Label>Company Name *</Form.Label>
+                  <Form.Label>Company Name <span className="text-danger">*</span></Form.Label>
                   <Form.Control
                     type="text"
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="contactEmail">
+                  <Form.Label>Contact Email <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="contactEmail"
+                    value={formData.contactEmail}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="password">
+                  <Form.Label>
+                    <FontAwesomeIcon icon={faLock} className="me-2" />
+                    Password <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter password"
                     required
                   />
                 </Form.Group>
@@ -170,6 +201,23 @@ const SupplierRegistration = () => {
                   />
                 </Form.Group>
 
+                <Form.Group className="mb-3" controlId="country">
+                  <Form.Label>Country</Form.Label>
+                  <Select
+                    name="country"
+                    options={countryOptions}
+                    value={countryOptions.find((c) => c.value === formData.country) || null}
+                    onChange={(selectedOption) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        country: selectedOption ? selectedOption.value : '',
+                      }))
+                    }
+                    placeholder="Select a country"
+                    isClearable
+                  />
+                </Form.Group>
+
                 <Form.Group className="mb-3" controlId="description">
                   <Form.Label>Description</Form.Label>
                   <Form.Control
@@ -178,17 +226,6 @@ const SupplierRegistration = () => {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="contactEmail">
-                  <Form.Label>Contact Email *</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="contactEmail"
-                    value={formData.contactEmail}
-                    onChange={handleChange}
-                    required
                   />
                 </Form.Group>
 
