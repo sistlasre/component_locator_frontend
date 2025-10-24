@@ -86,6 +86,18 @@ class ApiService {
     return this.api.get(`/supplier/${supplierId}`);
   }
 
+  async subscribe(partNumber, userEmail) {
+    return this.api.post(`/subscribe/${partNumber}`, { email: userEmail });
+  }
+
+  async unsubscribe(partNumber, userEmail) {
+    return this.api.post(`/unsubscribe/${partNumber}`, { email: userEmail });
+  }
+
+  async getSubscriptions(userEmail) {
+    return this.api.get(`/subscriptions/${userEmail}`);
+  }
+
 }
 
 export const apiService = new ApiService();

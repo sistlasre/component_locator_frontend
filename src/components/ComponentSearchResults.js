@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Table, Spinner, Alert, Badge, Button } from 'react-bootstrap';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSort, faSortAsc, faSortDesc, faArrowLeft, faExternalLinkAlt, faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faSort, faSortAsc, faSortDesc, faArrowLeft, faExternalLinkAlt, faChevronDown, faChevronRight, faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 import ComponentSearchBar from './ComponentSearchBar';
 import SupplierModal from './SupplierModal';
 import { apiService } from '../services/apiService';
@@ -22,6 +22,9 @@ const ComponentSearchResults = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isInStockExpanded, setIsInStockExpanded] = useState(false);
   const [isBrokeredExpanded, setIsBrokeredExpanded] = useState(false);
+  const [userSubscriptions, setUserSubscriptions] = useState([]);
+  const [subscribing, setSubscribing] = useState({});
+  const [unsubscribing, setUnsubscribing] = useState({});
 
   // Parse query parameters
   const queryParams = new URLSearchParams(location.search);
@@ -29,12 +32,28 @@ const ComponentSearchResults = () => {
   const field = queryParams.get('field') || 'mpn';
   const fieldValue = queryParams.get('field_value') || '';
 
+  // Fetch user subscriptions when component mounts
+  useEffect(() => {
+    if (user) {
+      fetchSubscriptions();
+    }
+  }, [user]);
+
   // Perform search when component mounts or query params change
   useEffect(() => {
     if (fieldValue && fieldValue.length >= 3) {
       performSearch();
     }
   }, [location.search]);
+
+  const fetchSubscriptions = async () => {
+    try {
+      const response = await apiService.getSubscriptions(user);
+      setUserSubscriptions(response.data.subscribedParts || []);
+    } catch (err) {
+      console.error('Error fetching subscriptions:', err);
+    }
+  };
 
   const performSearch = async () => {
     setLoading(true);
@@ -151,8 +170,68 @@ const ComponentSearchResults = () => {
     setSelectedItem(null);
   };
 
+  const handleSubscribe = async (partNumber) => {
+    setSubscribing(prev => ({ ...prev, [partNumber]: true }));
+    try {
+      await apiService.subscribe(partNumber, user);
+      setUserSubscriptions(prev => [...prev, partNumber]);
+    } catch (err) {
+      console.error('Error subscribing:', err);
+      setError(`Failed to subscribe to ${partNumber}. Please try again.`);
+    } finally {
+      setSubscribing(prev => ({ ...prev, [partNumber]: false }));
+    }
+  };
+
+  const handleUnsubscribe = async (partNumber) => {
+    setUnsubscribing(prev => ({ ...prev, [partNumber]: true }));
+    try {
+      await apiService.unsubscribe(partNumber, user);
+      setUserSubscriptions(prev => prev.filter(part => part !== partNumber));
+    } catch (err) {
+      console.error('Error unsubscribing:', err);
+      setError(`Failed to unsubscribe from ${partNumber}. Please try again.`);
+    } finally {
+      setUnsubscribing(prev => ({ ...prev, [partNumber]: false }));
+    }
+  };
+
+  const renderSubscriptionButton = (partNumber) => {
+    const isSubscribed = userSubscriptions.includes(partNumber);
+    const isProcessing = subscribing[partNumber] || unsubscribing[partNumber];
+
+    return (
+      <Button
+        size="sm"
+        variant={isSubscribed ? "outline-secondary" : "outline-primary"}
+        onClick={(e) => {
+          e.stopPropagation();
+          isSubscribed ? handleUnsubscribe(partNumber) : handleSubscribe(partNumber);
+        }}
+        disabled={isProcessing}
+      >
+        {isProcessing ? (
+          <Spinner as="span" animation="border" size="sm" />
+        ) : (
+          <>
+            <FontAwesomeIcon icon={isSubscribed ? faBellSlash : faBell} className="me-1" />
+            {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+          </>
+        )}
+      </Button>
+    );
+  };
+
+  // Get unique part numbers from results
+  const getUniquePartNumbers = (items) => {
+    return [...new Set(items.map(item => item.part_number))];
+  };
+
   // Render inventory table section
-  const renderInventorySection = (title, badgeColor, items, keyPrefix, isExpanded, setIsExpanded) => (
+  const renderInventorySection = (title, badgeColor, items, keyPrefix, isExpanded, setIsExpanded) => {
+    const uniquePartNumbers = getUniquePartNumbers(items);
+
+    return (
     <Row className="mb-4">
       <Col>
         <div 
@@ -193,6 +272,7 @@ const ComponentSearchResults = () => {
                       Quantity {getSortIcon('qty')}
                     </th>
                     <th>Supplier</th>
+                    {user && <th>Subscription</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -251,6 +331,11 @@ const ComponentSearchResults = () => {
                           '******'
                         )}
                       </td>
+                      {user && (
+                        <td>
+                          {renderSubscriptionButton(item.part_number)}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -261,7 +346,8 @@ const ComponentSearchResults = () => {
         )}
       </Col>
     </Row>
-  );
+    );
+  };
 
   return (
     <Container fluid className="py-3">

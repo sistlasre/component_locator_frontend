@@ -12,6 +12,7 @@ import SupplierRegistration from './components/SupplierRegistration';
 import Login from './components/Login';
 import Register from './components/Register';
 import LoggedOutRoute from './components/LoggedOutRoute';
+import UserSubscriptions from './components/UserSubscriptions';
 
 function Layout({ children }) {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Routes>
               <Route path="/" element={<ComponentLocator />} />
               <Route path="/search" element={<ComponentSearchResults />} />
+              <Route path="/subscriptions" element={<UserSubscriptions />} />
               <Route path="/supplier/register" element={<SupplierRegistration />} />
               <Route path="/login" element={<LoggedOutRoute><Login /></LoggedOutRoute>} />
               <Route path="/register" element={<LoggedOutRoute><Register /></LoggedOutRoute>} />
