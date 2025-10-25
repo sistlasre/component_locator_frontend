@@ -371,7 +371,7 @@ const ComponentSearchResults = () => {
           style={{ 
             cursor: 'pointer', 
             backgroundColor: '#f8f9fa',
-            padding: '0.75rem 1rem'
+            padding: '0.3rem 0.5rem'
           }}
         >
           <div className="d-flex justify-content-between align-items-center">
