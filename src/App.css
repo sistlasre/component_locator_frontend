@@ -292,6 +292,13 @@ tr.ic-small td {
   padding-bottom: 1px !important;
 }
 
+tr.ic-smaller td {
+  font-size: 10px;
+  vertical-align: middle;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
 .ic-hidden {
   display: none;
 }
@@ -299,6 +306,12 @@ tr.ic-small td {
 .custom-modal-width {
   width: 80vw;
   max-width: 85vw;
+}
+
+.btn-xs {
+  padding: 0rem 0.1rem;
+  font-size: 10px;
+  border-radius: 0.2rem;
 }
 
 tr.no-padding th {
