@@ -173,12 +173,13 @@ const SupplierRegistration = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="phoneNumber">
-                  <Form.Label>Telephone Number</Form.Label>
+                  <Form.Label>Telephone Number <span className="text-danger">*</span></Form.Label>
                   <Form.Control
-                    type="text"
+                    type="tel"
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleChange}
+                    required
                   />
                 </Form.Group>
 
@@ -193,18 +194,19 @@ const SupplierRegistration = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="address">
-                  <Form.Label>Address</Form.Label>
+                  <Form.Label>Address <span className="text-danger">*</span></Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={2}
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
+                    required
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="country">
-                  <Form.Label>Country</Form.Label>
+                  <Form.Label>Country <span className="text-danger">*</span></Form.Label>
                   <Select
                     name="country"
                     options={countryOptions}
@@ -217,6 +219,7 @@ const SupplierRegistration = () => {
                     }
                     placeholder="Select a country"
                     isClearable
+                    required
                   />
                 </Form.Group>
 
@@ -232,7 +235,7 @@ const SupplierRegistration = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-4" controlId="emailForUpload">
-                  <Form.Label>Email for Uploads (if different)</Form.Label>
+                  <Form.Label>Email for Uploads <span className="fst-italic text-muted small">(if different than contact email)</span></Form.Label>
                   <Form.Control
                     type="email"
                     name="emailForUpload"
@@ -250,7 +253,7 @@ const SupplierRegistration = () => {
                 </p>
 
                 <Form.Group className="mb-4" controlId="inStockFileName">
-                  <Form.Label>In Stock Inventory File Name <span className="fst-italic text-muted">(no extension)</span></Form.Label>
+                  <Form.Label>In Stock Inventory File Name <span className="fst-italic text-muted small">(no extension)</span></Form.Label>
                   <Form.Control
                     type="text"
                     name="inStockFileName"
@@ -260,7 +263,7 @@ const SupplierRegistration = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-4" controlId="brokeredFileName">
-                  <Form.Label>Brokered Inventory File Name <span className="fst-italic text-muted">(no extension)</span></Form.Label>
+                  <Form.Label>Brokered Inventory File Name <span className="fst-italic text-muted small">(no extension)</span></Form.Label>
                   <Form.Control
                     type="text"
                     name="brokeredFileName"
