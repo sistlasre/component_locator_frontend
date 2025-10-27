@@ -33,6 +33,25 @@ const SupplierRegistration = () => {
     'Quantity': '',
   });
 
+  const CERT_OPTIONS = ["ISO9001", "AS9120", "AS6081", "AS6171"];
+  const [certificates, setCertificates] = useState([
+    { cert: "", expirationDate: ""}
+  ]);
+
+  const handleCertChange = (index, field, value) => {
+    const newCerts = [...certificates];
+    newCerts[index][field] = value;
+    setCertificates(newCerts);
+  };
+
+  const addCert = () => {
+    setCertificates([...certificates, { cert: "", expirationDate: "" }]);
+  };
+
+  const removeCert = (index) => {
+    setCertificates(certificates.filter((_, i) => i !== index));
+  };
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -64,18 +83,26 @@ const SupplierRegistration = () => {
         Object.entries(formData).filter(([_, value]) => value && value.trim() !== '')
       );
 
-      // Filter out empty mappings
-      const filteredMappings = Object.fromEntries(
-        Object.entries(mappings).filter(([_, value]) => value && value.trim() !== '')
-      );
-
       const payload = {
         ...filteredFormData,
       };
 
+      // Filter out empty mappings
+      const filteredMappings = Object.fromEntries(
+        Object.entries(mappings).filter(([_, value]) => value && value.trim() !== '')
+      );
       // Only include mappings if any exist
       if (Object.keys(filteredMappings).length > 0) {
         payload.fieldMappings = filteredMappings;
+      }
+
+      const filteredCerts = certificates
+      .filter(certificate => certificate.cert.trim())
+      .filter((certificate, index, self) =>
+        index === self.findIndex(c => c.cert.trim() === certificate.cert.trim()
+      ));
+      if (filteredCerts.length) {
+        payload.certificates = filteredCerts;
       }
 
       const response = await apiService.createSupplier(payload);
@@ -243,6 +270,56 @@ const SupplierRegistration = () => {
                     onChange={handleChange}
                   />
                 </Form.Group>
+
+                {/* Quality Certifications */}
+                <hr />
+                <h5 className="mt-4 mb-3">Quality Certifications</h5>
+                {certificates.map((item, index) => (
+                  <Row key={index} className="mb-3 align-items-end">
+                    <Col>
+                      <Form.Group controlId={`cert-${index}`}>
+                        <Form.Label>Certification</Form.Label>
+                        <Form.Select
+                          value={item.cert}
+                          onChange={(e) =>
+                            handleCertChange(index, "cert", e.target.value)
+                          }
+                        >
+                          <option value="">Select Certification</option>
+                          {CERT_OPTIONS.map((cert, i) => (
+                            <option key={i} value={cert}>
+                              {cert}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group controlId={`expiration-${index}`}>
+                        <Form.Label>Expiration Date</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={item.expirationDate}
+                          onChange={(e) =>
+                            handleCertChange(index, "expirationDate", e.target.value)
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col xs="auto">
+                      <Button
+                        variant="danger"
+                        onClick={() => removeCert(index)}
+                        disabled={certificates.length === 1} // Prevent removing last item
+                      >
+                        Remove
+                      </Button>
+                    </Col>
+                  </Row>
+                ))}
+                <Button variant="secondary" onClick={addCert}>
+                  Add Line Item
+                </Button>
 
                 {/* Inventory Listing Filenames */}
                 <hr />
