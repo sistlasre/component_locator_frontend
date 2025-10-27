@@ -20,7 +20,9 @@ const SupplierRegistration = () => {
     contactEmail: '',
     emailForUpload: '',
     country: '',
-    password: ''
+    password: '',
+    inStockFileName: '',
+    brokeredFileName: ''
   });
 
   const [mappings, setMappings] = useState({
@@ -100,8 +102,8 @@ const SupplierRegistration = () => {
         'Quantity': ''
       });
     } catch (err) {
-      console.error('Submission error:', err);
-      setError('Failed to register supplier. Please try again.');
+      const errorMessage = err?.response?.data?.error || 'Please try again.';
+      setError('Failed to register supplier. ' + errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -235,6 +237,34 @@ const SupplierRegistration = () => {
                     type="email"
                     name="emailForUpload"
                     value={formData.emailForUpload}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+
+                {/* Inventory Listing Filenames */}
+                <hr />
+                <h5 className="mt-4 mb-3">Inventory Listing Filenames</h5>
+                <p className="text-muted small mb-4">
+                  Provide the file name that corresponds to your in stock inventory and brokered inventory uploads.
+                  If nothing provided, we will fall back to our defaults.
+                </p>
+
+                <Form.Group className="mb-4" controlId="inStockFileName">
+                  <Form.Label>In Stock Inventory File Name <span className="fst-italic text-muted">(no extension)</span></Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="inStockFileName"
+                    value={formData.inStockFileName}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-4" controlId="brokeredFileName">
+                  <Form.Label>Brokered Inventory File Name <span className="fst-italic text-muted">(no extension)</span></Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="brokeredFileName"
+                    value={formData.brokeredFileName}
                     onChange={handleChange}
                   />
                 </Form.Group>
