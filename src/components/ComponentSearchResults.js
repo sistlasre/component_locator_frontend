@@ -262,8 +262,8 @@ const ComponentSearchResults = () => {
 
     return (
       <div style={{ overflowX: 'auto' }}>
-        <Table hover className="mb-0" size="sm" style={{ fontSize: '0.9rem' }}>
-          <thead style={{ backgroundColor: '#e8f4ff' }}>
+        <Table striped hover className="mb-0" size="sm" style={{ fontSize: '0.9rem' }}>
+          <thead className="table-light" style={{ backgroundColor: '#e8f4ff' }}>
             <tr>
               <th onClick={() => handleSort('part_number', region)} style={{ cursor: 'pointer', minWidth: '120px' }}>
                 Part Number {getSortIcon('part_number')}
@@ -409,7 +409,7 @@ const ComponentSearchResults = () => {
             )}
             {region.brokered.length > 0 && (
               <div>
-                <div style={{ backgroundColor: '#d1ecf1', padding: '0.2rem 1rem' }}>
+                <div style={{ backgroundColor: '#8cb3d9', padding: '0.2rem 1rem' }}>
                   <strong style={{ color: '#0c5460' }}>Brokered Inventory</strong>
                 </div>
                 {renderRegionTable(region.brokered, regionKey, 'brokered')}

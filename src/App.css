@@ -322,7 +322,7 @@ tr.no-padding th {
 }
 
 .table-striped tbody tr:nth-of-type(odd) > * {
-  background-color: #ecf3f8; /* Light blue for odd rows */
+  background-color: #d1ecf1; /* Light blue for odd rows */
 }
 
 .table-striped tbody tr:nth-of-type(even) > * {
