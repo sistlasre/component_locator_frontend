@@ -149,11 +149,11 @@ const SupplierModal = ({ show, onHide, supplierId, selectedItem }) => {
                   </div>
                 )}
                 
-                {supplierInfo.contact_email && (
+                {supplierInfo.contact_email && selectedItem && (
                   <div className="mb-2">
                     <strong>Email:</strong>
                     <div>
-                      <a href={`mailto:${supplierInfo.contact_email}`}>{supplierInfo.contact_email}</a>
+                      <a href={`mailto:${supplierInfo.contact_email}?subject=Inquiry%20About%20${selectedItem.part_number}`}>{supplierInfo.contact_email}</a>
                     </div>
                   </div>
                 )}
