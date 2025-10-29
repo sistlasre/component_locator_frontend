@@ -113,57 +113,7 @@ const BetaComponentSearchResults = () => {
           {fieldValue} Details
         </Button>
 
-        {/* Distributor tabs */}
-        <Tabs value={1} sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-          <Tab label={`My Preferred Distributors (0)`} />
-          <Tab label={`All Results (${results.length})`} />
-        </Tabs>
       </Box>
-
-      {/* Filters */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={2}>
-            <Typography variant="body2" sx={{ mb: 1 }}>Desired Stock:</Typography>
-            <TextField 
-              size="small" 
-              placeholder="eg. 20000" 
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Checkbox size="small" />
-              <Typography variant="body2">In Stock Only</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Checkbox size="small" />
-              <Typography variant="body2">Exact Matches Only</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Typography variant="body2" sx={{ mb: 1 }}>Currency Estimator:</Typography>
-            <Select size="small" fullWidth defaultValue="Default">
-              <MenuItem value="Default">Default</MenuItem>
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="EUR">EUR</MenuItem>
-            </Select>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Typography variant="body2" sx={{ mb: 1 }}>Filter by Manufacturer:</Typography>
-            <Select size="small" fullWidth defaultValue="">
-              <MenuItem value="">Select Manufacturer</MenuItem>
-            </Select>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Button variant="contained" fullWidth>
-              Set Alert
-            </Button>
-          </Grid>
-        </Grid>
-      </Paper>
 
       {loading && (
         <Box sx={{ textAlign: 'center', py: 5 }}>
@@ -182,21 +132,19 @@ const BetaComponentSearchResults = () => {
       {!loading && results.length > 0 && (
         <Paper>
           <Box sx={{ p: 2, bgcolor: 'grey.50', borderBottom: 1, borderColor: 'divider' }}>
-            <Grid container alignItems="center">
-              <Grid item xs>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Grid container alignItems="center" justifyContent="space-between">
+              <Grid item>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Typography variant="h6">Search Results</Typography>
-                  <Chip label="Multiple Distributors" size="small" color="primary" />
                 </Box>
               </Grid>
               <Grid item>
-                <Typography variant="body2" color="text.secondary">
-                  Showing {results.length} results
+                <Typography variant="body1" color="text.secondary" sx={{ pr: 2 }}>
+                  Showing <strong>{results.length}</strong> results
                 </Typography>
               </Grid>
             </Grid>
           </Box>
-          
           <TableContainer>
             <Table>
               <TableHead>
@@ -214,7 +162,16 @@ const BetaComponentSearchResults = () => {
                 {results.map((item, idx) => {
                   const priceBreaks = getPriceBreaks(item);
                   return (
-                    <TableRow key={idx} hover>
+                    <TableRow 
+                      key={idx} 
+                      hover
+                      sx={{ 
+                        bgcolor: idx % 2 === 0 ? 'white' : '#ebf4fa',
+                        '&:hover': {
+                          bgcolor: 'action.hover'
+                        }
+                      }}
+                    >
                       <TableCell>
                         {item.link ? (
                           <Link 
@@ -256,21 +213,10 @@ const BetaComponentSearchResults = () => {
                             {item.description}
                           </Typography>
                         )}
-                        {item.rohs && (
-                          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                            <Typography variant="body2">
-                              RoHS: <Chip label="Compliant" size="small" color="success" sx={{ height: 20 }} />
-                            </Typography>
-                          </Box>
-                        )}
-                        <Box sx={{ mt: 1 }}>
+                        <Box>
                           <Typography variant="caption" color="text.secondary">
                             {[
-                              item.min_qty && `Min Qty: ${item.min_qty}`,
-                              item.package_multiple && `Package Multiple: ${item.package_multiple}`,
-                              item.dc && `DC: ${item.dc}`,
-                              item.date_code && `Date Code: ${item.date_code}`,
-                              item.container && `Container: ${item.container}`
+                              item.dc && `Date Code: ${item.dc}`,
                             ].filter(Boolean).join(' | ')}
                           </Typography>
                         </Box>
