@@ -281,9 +281,9 @@ const BetaComponentSearchResults = () => {
                           </Box>
                         )}
                       </TableCell>
-                      <TableCell>{item.mfr || '—'}</TableCell>
+                      <TableCell>{item.mfr && item.mfr.toLowerCase() !== 'nan' ? item.mfr : '-'}</TableCell>
                       <TableCell>
-                        {item.description && (
+                        {item.description && item.description.toLowerCase() !== 'nan' &&  (
                           <Typography variant="body2" sx={{ mb: 0.5 }}>
                             {item.description}
                           </Typography>
@@ -291,7 +291,7 @@ const BetaComponentSearchResults = () => {
                         <Box>
                           <Typography variant="caption" color="text.secondary">
                             {[
-                              item.dc && `Date Code: ${item.dc}`,
+                              item.dc && item.dc.toLowerCase() !== 'nan' && `Date Code: ${item.dc}`,
                             ].filter(Boolean).join(' | ')}
                           </Typography>
                         </Box>
@@ -393,9 +393,9 @@ const BetaComponentSearchResults = () => {
                         <TableBody>
                           {displayItems.map((item, idx) => (
                             <TableRow key={idx}>
-                              <TableCell>{item.mfr || '—'}</TableCell>
+                              <TableCell>{item.mfr && item.mfr.toLowerCase() !== 'nan' ? item.mfr : '-'}</TableCell>
                               <TableCell>
-                                {item.description && (
+                                {item.description && item.description.toLowerCase() !== 'nan' && (
                                   <Typography variant="body2" sx={{ mb: 0.5 }}>
                                     {item.description}
                                   </Typography>
@@ -410,11 +410,7 @@ const BetaComponentSearchResults = () => {
                                 <Box sx={{ mt: 1 }}>
                                   <Typography variant="caption" color="text.secondary">
                                     {[
-                                      item.min_qty && `Min Qty: ${item.min_qty}`,
-                                      item.package_multiple && `Package Multiple: ${item.package_multiple}`,
-                                      item.dc && `DC: ${item.dc}`,
-                                      item.date_code && `Date Code: ${item.date_code}`,
-                                      item.container && `Container: ${item.container}`
+                                      item.dc && item.dc.toLowerCase() !== 'nan' && `Date Code: ${item.dc}`,
                                     ].filter(Boolean).join(' | ')}
                                   </Typography>
                                 </Box>
@@ -531,9 +527,9 @@ const BetaComponentSearchResults = () => {
                             </Typography>
                           )}
                         </TableCell>
-                        <TableCell>{item.mfr || '—'}</TableCell>
+                        <TableCell>{item.mfr && item.mfr.toLowerCase() !== 'nan' ? item.mfr : '-'}</TableCell>
                         <TableCell>
-                          {item.description && (
+                          {item.description && item.description.toLowerCase() !== 'nan' && (
                             <Typography variant="body2" sx={{ mb: 0.5 }}>
                               {item.description}
                             </Typography>
@@ -548,11 +544,7 @@ const BetaComponentSearchResults = () => {
                           <Box sx={{ mt: 1 }}>
                             <Typography variant="caption" color="text.secondary">
                               {[
-                                item.min_qty && `Min Qty: ${item.min_qty}`,
-                                item.package_multiple && `Package Multiple: ${item.package_multiple}`,
-                                item.dc && `DC: ${item.dc}`,
-                                item.date_code && `Date Code: ${item.date_code}`,
-                                item.container && `Container: ${item.container}`
+                                item.dc && item.dc.toLowerCase() !== 'nan' && `Date Code: ${item.dc}`,
                               ].filter(Boolean).join(' | ')}
                             </Typography>
                           </Box>
