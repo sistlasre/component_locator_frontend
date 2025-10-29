@@ -13,6 +13,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import LoggedOutRoute from './components/LoggedOutRoute';
 import UserSubscriptions from './components/UserSubscriptions';
+import BetaComponentLocator from './components/BetaComponentLocator';
+import BetaComponentSearchResults from './components/BetaComponentSearchResults';
 
 function Layout({ children }) {
   return (
@@ -34,6 +36,8 @@ function App() {
               <Route path="/search" element={<ComponentSearchResults />} />
               <Route path="/subscriptions" element={<UserSubscriptions />} />
               <Route path="/supplier/register" element={<SupplierRegistration />} />
+              <Route path="/beta" element={<BetaComponentLocator />} />
+              <Route path="/beta-search" element={<BetaComponentSearchResults />} />
               <Route path="/login" element={<LoggedOutRoute><Login /></LoggedOutRoute>} />
               <Route path="/register" element={<LoggedOutRoute><Register /></LoggedOutRoute>} />
             </Routes>

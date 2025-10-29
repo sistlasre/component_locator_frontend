@@ -1,0 +1,89 @@
+/* ----- Shared Landing Page ----- */
+.beta-landing {
+  height: 85vh;
+  background: #fff;
+}
+
+.beta-title {
+  font-weight: 600;
+}
+
+.beta-search-input {
+  max-width: 600px;
+  border-radius: 50px 0 0 50px;
+  border-right: none;
+  padding: 0.75rem 1rem;
+}
+
+.beta-search-btn {
+  border-radius: 0 50px 50px 0;
+  padding: 0.75rem 1.5rem;
+}
+
+.beta-footnote {
+  font-size: 0.9rem;
+}
+
+/* ----- Results Page Layout ----- */
+.beta-results-page {
+  background: #f8f9fa;
+}
+
+.beta-filter-panel {
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  min-height: 80vh;
+}
+
+.beta-result-card {
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.2s ease;
+}
+
+.beta-result-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.beta-image-placeholder {
+  width: 70px;
+  height: 70px;
+  background: #f0f0f0;
+  border-radius: 8px;
+}
+
+/* ----- Links & Text ----- */
+.beta-part-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.beta-part-link:hover {
+  text-decoration: underline;
+}
+
+/* ----- Pricing Table ----- */
+.beta-price-table {
+  font-size: 0.8rem;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.beta-price-table th {
+  background: #f0f4f8;
+  font-weight: 600;
+}
+
+/* ----- Distributor Badge ----- */
+.beta-distributor {
+  margin-top: 0.25rem;
+}
+
+.beta-dist-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #d8d8d8;
+}
