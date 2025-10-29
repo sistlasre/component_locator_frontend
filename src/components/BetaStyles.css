@@ -1,48 +1,32 @@
 /* ----- Shared Landing Page ----- */
 .beta-landing {
-  height: 85vh;
   background: #fff;
 }
 
 .beta-title {
-  font-weight: 600;
-}
-
-.beta-search-input {
-  max-width: 600px;
-  border-radius: 50px 0 0 50px;
-  border-right: none;
-  padding: 0.75rem 1rem;
-}
-
-.beta-search-btn {
-  border-radius: 0 50px 50px 0;
-  padding: 0.75rem 1.5rem;
+  /* Handled by MUI Typography sx prop */
 }
 
 .beta-footnote {
-  font-size: 0.9rem;
+  /* Handled by MUI Typography variant */
 }
 
 /* ----- Results Page Layout ----- */
 .beta-results-page {
-  background: #f8f9fa;
+  background: #ffffff;
 }
 
 .beta-filter-panel {
-  background: #fff;
-  border-right: 1px solid #ddd;
-  padding: 1rem;
-  min-height: 80vh;
+  /* Handled by MUI Paper component */
 }
 
-.beta-result-card {
-  border: 1px solid #e0e0e0;
-  transition: box-shadow 0.2s ease;
+/* Table styles */
+.MuiTableRow-root:hover {
+  background-color: #f5f5f5;
 }
 
-.beta-result-card:hover {
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+.MuiTableCell-root {
+  border-color: #e0e0e0;
 }
 
 .beta-image-placeholder {
@@ -65,14 +49,14 @@
 
 /* ----- Pricing Table ----- */
 .beta-price-table {
-  font-size: 0.8rem;
-  width: 100%;
-  border-radius: 6px;
-  overflow: hidden;
+  /* MUI Table handles most styling */
 }
 
-.beta-price-table th {
+.beta-price-table .MuiTableHead-root {
   background: #f0f4f8;
+}
+
+.beta-price-table .MuiTableCell-head {
   font-weight: 600;
 }
 

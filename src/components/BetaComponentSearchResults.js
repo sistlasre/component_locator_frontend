@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import {
   Container,
-  Row,
-  Col,
-  Card,
-  Spinner,
+  Grid,
+  CircularProgress,
   Alert,
-  Form,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Table,
-  Badge
-} from 'react-bootstrap';
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Link,
+  Checkbox,
+  TextField,
+  Tabs,
+  Tab,
+  Chip
+} from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 import './BetaStyles.css';
@@ -53,136 +68,253 @@ const BetaComponentSearchResults = () => {
     }
   };
 
-  const renderPricingTable = (item) => {
+  const getPriceBreaks = (item) => {
     const breaks = [];
     for (let i = 0; i <= 4; i++) {
       const breakQty = item[`break_qty_${String.fromCharCode(97 + i)}`];
       const price = item[`price_${String.fromCharCode(97 + i)}`];
       if (breakQty && price && price > 0) {
-        breaks.push({ breakQty, price });
+        breaks.push({ qty: breakQty, price: price });
       }
     }
+    return breaks;
+  };
 
-    if (breaks.length === 0) return null;
-
+  const renderPriceColumn = (item) => {
+    const breaks = getPriceBreaks(item);
+    if (breaks.length === 0) return '—';
+    
     return (
-      <Table striped bordered hover size="sm" className="mt-2 beta-price-table">
-        <thead>
-          <tr>
-            <th>Qty</th>
-            <th>Price (USD)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {breaks.map((b, idx) => (
-            <tr key={idx}>
-              <td>{b.breakQty}</td>
-              <td>${b.price.toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <Box>
+        {breaks.slice(0, 3).map((b, idx) => (
+          <Box key={idx} sx={{ display: 'flex', justifyContent: 'space-between', minWidth: 120 }}>
+            <Typography variant="body2" sx={{ mr: 2 }}>{b.qty}</Typography>
+            <Typography variant="body2">${b.price.toFixed(4)}</Typography>
+          </Box>
+        ))}
+        {breaks.length > 3 && (
+          <Link component="button" variant="body2" sx={{ mt: 0.5 }}>
+            See More
+          </Link>
+        )}
+      </Box>
     );
   };
 
-  const renderDistributorBadge = (item) => (
-    <div className="beta-distributor d-flex align-items-center mt-2">
-      <div className="beta-dist-logo me-2"></div>
-      <div>
-        <div className="fw-semibold">{item.supplier_name}</div>
-        <div className="text-muted small">{item.country || '—'}</div>
-      </div>
-    </div>
-  );
-
   return (
-    <Container fluid className="py-3 beta-results-page">
-      <Row>
-        {/* Left Filters */}
-        <Col md={3} className="beta-filter-panel">
-          <h6 className="text-uppercase text-muted mb-3">Filters</h6>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Region</Form.Label>
-              <Form.Select
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-              >
-                <option>All</option>
-                <option>Americas</option>
-                <option>Europe</option>
-                <option>Asia</option>
-              </Form.Select>
-            </Form.Group>
-          </Form>
-        </Col>
+    <Container maxWidth="xl" sx={{ py: 2 }}>
+      {/* Header with part number and tabs */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+          {fieldValue} <Typography component="span" variant="body1" color="text.secondary">price and stock</Typography>
+        </Typography>
+        
+        <Button variant="contained" size="small" sx={{ mb: 2 }}>
+          {fieldValue} Details
+        </Button>
 
-        {/* Right Results */}
-        <Col md={9}>
-          <h4 className="mb-3">
-            Search results for <span className="text-primary">“{fieldValue}”</span>
-          </h4>
+        {/* Distributor tabs */}
+        <Tabs value={1} sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+          <Tab label={`My Preferred Distributors (0)`} />
+          <Tab label={`All Results (${results.length})`} />
+        </Tabs>
+      </Box>
 
-          {loading && (
-            <div className="text-center py-5">
-              <Spinner animation="border" />
-              <p className="mt-3 text-muted">Loading results...</p>
-            </div>
-          )}
+      {/* Filters */}
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={2}>
+            <Typography variant="body2" sx={{ mb: 1 }}>Desired Stock:</Typography>
+            <TextField 
+              size="small" 
+              placeholder="eg. 20000" 
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Checkbox size="small" />
+              <Typography variant="body2">In Stock Only</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Checkbox size="small" />
+              <Typography variant="body2">Exact Matches Only</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Typography variant="body2" sx={{ mb: 1 }}>Currency Estimator:</Typography>
+            <Select size="small" fullWidth defaultValue="Default">
+              <MenuItem value="Default">Default</MenuItem>
+              <MenuItem value="USD">USD</MenuItem>
+              <MenuItem value="EUR">EUR</MenuItem>
+            </Select>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Typography variant="body2" sx={{ mb: 1 }}>Filter by Manufacturer:</Typography>
+            <Select size="small" fullWidth defaultValue="">
+              <MenuItem value="">Select Manufacturer</MenuItem>
+            </Select>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Button variant="contained" fullWidth>
+              Set Alert
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
 
-          {error && <Alert variant="danger">{error}</Alert>}
+      {loading && (
+        <Box sx={{ textAlign: 'center', py: 5 }}>
+          <CircularProgress />
+          <Typography sx={{ mt: 3, color: 'text.secondary' }}>Loading results...</Typography>
+        </Box>
+      )}
 
-          {!loading && !error && results.length === 0 && (
-            <Alert variant="info">No results found for “{fieldValue}”.</Alert>
-          )}
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-          {!loading && results.length > 0 && (
-            <div className="beta-results-list">
-              {results.map((item, idx) => (
-                <Card key={idx} className="mb-3 beta-result-card shadow-sm">
-                  <Card.Body>
-                    <Row>
-                      <Col
-                        md={2}
-                        className="d-flex align-items-center justify-content-center"
-                      >
-                        <div className="beta-image-placeholder" />
-                      </Col>
+      {!loading && !error && results.length === 0 && (
+        <Alert severity="info">No results found for "{fieldValue}".</Alert>
+      )}
 
-                      <Col md={7}>
-                        <h6 className="mb-1">
-                          <a
-                            href={item.link || '#'}
+      {/* Results Table */}
+      {!loading && results.length > 0 && (
+        <Paper>
+          <Box sx={{ p: 2, bgcolor: 'grey.50', borderBottom: 1, borderColor: 'divider' }}>
+            <Grid container alignItems="center">
+              <Grid item xs>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="h6">Search Results</Typography>
+                  <Chip label="Multiple Distributors" size="small" color="primary" />
+                </Box>
+              </Grid>
+              <Grid item>
+                <Typography variant="body2" color="text.secondary">
+                  Showing {results.length} results
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+          
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ bgcolor: 'grey.100' }}>
+                  <TableCell>Part #</TableCell>
+                  <TableCell>Supplier</TableCell>
+                  <TableCell>Manufacturer</TableCell>
+                  <TableCell>Description / Details</TableCell>
+                  <TableCell align="center">Stock</TableCell>
+                  <TableCell>Price</TableCell>
+                  <TableCell align="center">Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {results.map((item, idx) => {
+                  const priceBreaks = getPriceBreaks(item);
+                  return (
+                    <TableRow key={idx} hover>
+                      <TableCell>
+                        {item.link ? (
+                          <Link 
+                            href={item.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="beta-part-link"
+                            underline="hover"
+                            sx={{ color: 'primary.main', fontWeight: 500 }}
                           >
                             {item.part_number}
-                          </a>
-                        </h6>
-                        <div className="text-muted small mb-1">
-                          {item.mfr || '-'} • DC {item.dc || '-'}
-                        </div>
-                        <div className="text-muted small">
-                          {item.description || 'No description available.'}
-                        </div>
-                        {renderDistributorBadge(item)}
-                      </Col>
-
-                      <Col md={3} className="text-md-end mt-3 mt-md-0">
-                        <Badge bg="secondary" className="mb-2">
-                          Qty: {item.qty || '-'}
-                        </Badge>
-                        {renderPricingTable(item)}
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
-          )}
-        </Col>
-      </Row>
+                          </Link>
+                        ) : (
+                          <Typography sx={{ color: 'primary.main', fontWeight: 500 }}>
+                            {item.part_number}
+                          </Typography>
+                        )}
+                        {item.supplier_code && (
+                          <Typography variant="caption" display="block" color="text.secondary">
+                            DISTI # {item.supplier_code}
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {item.supplier_name && (
+                          <Box>
+                            <Typography variant="body2">{item.supplier_name}</Typography>
+                            {item.country && (
+                              <Typography variant="caption" color="text.secondary">
+                                {item.country}
+                              </Typography>
+                            )}
+                          </Box>
+                        )}
+                      </TableCell>
+                      <TableCell>{item.mfr || '—'}</TableCell>
+                      <TableCell>
+                        {item.description && (
+                          <Typography variant="body2" sx={{ mb: 0.5 }}>
+                            {item.description}
+                          </Typography>
+                        )}
+                        {item.rohs && (
+                          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                            <Typography variant="body2">
+                              RoHS: <Chip label="Compliant" size="small" color="success" sx={{ height: 20 }} />
+                            </Typography>
+                          </Box>
+                        )}
+                        <Box sx={{ mt: 1 }}>
+                          <Typography variant="caption" color="text.secondary">
+                            {[
+                              item.min_qty && `Min Qty: ${item.min_qty}`,
+                              item.package_multiple && `Package Multiple: ${item.package_multiple}`,
+                              item.dc && `DC: ${item.dc}`,
+                              item.date_code && `Date Code: ${item.date_code}`,
+                              item.container && `Container: ${item.container}`
+                            ].filter(Boolean).join(' | ')}
+                          </Typography>
+                        </Box>
+                        {item.link && (
+                          <Box sx={{ mt: 1 }}>
+                            <Link href={item.link} target="_blank" variant="body2">
+                              {item.part_number} Part Details
+                            </Link>
+                          </Box>
+                        )}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="body1" fontWeight="medium">
+                          {item.qty || '—'}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        {renderPriceColumn(item)}
+                      </TableCell>
+                      <TableCell align="center">
+                        {item.link && (
+                          <Button 
+                            variant="contained" 
+                            color="success"
+                            size="small"
+                            href={item.link}
+                            target="_blank"
+                            sx={{ 
+                              bgcolor: '#8BC34A',
+                              '&:hover': { bgcolor: '#7CB342' }
+                            }}
+                          >
+                            Buy Now
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )}
     </Container>
   );
 };
