@@ -30,7 +30,6 @@ import {
   IconButton
 } from '@mui/material';
 import {
-  ViewList as ViewListIcon,
   ViewModule as ViewModuleIcon,
   AccountTree as AccountTreeIcon,
   ExpandMore as ExpandMoreIcon,
@@ -52,7 +51,7 @@ const BetaComponentSearchResults = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState('All');
-  const [viewMode, setViewMode] = useState('default');
+  const [viewMode, setViewMode] = useState('byPart');
   const [expandedSuppliers, setExpandedSuppliers] = useState({});
 
   useEffect(() => {
@@ -187,10 +186,6 @@ const BetaComponentSearchResults = () => {
             onChange={(e, newMode) => newMode && setViewMode(newMode)}
             size="small"
           >
-            <ToggleButton value="default">
-              <ViewListIcon sx={{ mr: 1 }} />
-              Default View
-            </ToggleButton>
             <ToggleButton value="byPart">
               <ViewModuleIcon sx={{ mr: 1 }} />
               Part View
@@ -201,140 +196,6 @@ const BetaComponentSearchResults = () => {
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
-      )}
-
-      {/* Results Table */}
-      {!loading && results.length > 0 && viewMode === 'default' && (
-        <Paper>
-          <Box sx={{ p: 2, bgcolor: 'grey.50', borderBottom: 1, borderColor: 'divider' }}>
-            <Grid container alignItems="center" justifyContent="space-between">
-              <Grid item>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Typography variant="h6">Search Results</Typography>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Typography variant="body1" color="text.secondary" sx={{ pr: 2 }}>
-                  Showing <strong>{results.length}</strong> results
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell>Part #</TableCell>
-                  <TableCell>Supplier</TableCell>
-                  <TableCell>Manufacturer</TableCell>
-                  <TableCell>Description / Details</TableCell>
-                  <TableCell align="center">Stock</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {results.map((item, idx) => {
-                  const priceBreaks = getPriceBreaks(item);
-                  return (
-                    <TableRow 
-                      key={idx} 
-                      hover
-                      sx={{ 
-                        bgcolor: idx % 2 === 0 ? 'white' : '#ebf4fa',
-                        '&:hover': {
-                          bgcolor: 'action.hover'
-                        }
-                      }}
-                    >
-                      <TableCell>
-                        {item.link ? (
-                          <Link 
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            underline="hover"
-                            sx={{ color: 'primary.main', fontWeight: 500 }}
-                          >
-                            {item.part_number}
-                          </Link>
-                        ) : (
-                          <Typography sx={{ color: 'primary.main', fontWeight: 500 }}>
-                            {item.part_number}
-                          </Typography>
-                        )}
-                        {item.supplier_code && (
-                          <Typography variant="caption" display="block" color="text.secondary">
-                            DISTI # {item.supplier_code}
-                          </Typography>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {item.supplier_name && (
-                          <Box>
-                            <Typography variant="body2">{item.supplier_name}</Typography>
-                            {item.country && (
-                              <Typography variant="caption" color="text.secondary">
-                                {item.country}
-                              </Typography>
-                            )}
-                          </Box>
-                        )}
-                      </TableCell>
-                      <TableCell>{item.mfr && item.mfr.toLowerCase() !== 'nan' ? item.mfr : '-'}</TableCell>
-                      <TableCell>
-                        {item.description && item.description.toLowerCase() !== 'nan' &&  (
-                          <Typography variant="body2" sx={{ mb: 0.5 }}>
-                            {item.description}
-                          </Typography>
-                        )}
-                        <Box>
-                          <Typography variant="caption" color="text.secondary">
-                            {[
-                              item.dc && item.dc.toLowerCase() !== 'nan' && `Date Code: ${item.dc}`,
-                            ].filter(Boolean).join(' | ')}
-                          </Typography>
-                        </Box>
-                        {item.link && (
-                          <Box sx={{ mt: 1 }}>
-                            <Link href={item.link} target="_blank" variant="body2">
-                              {item.part_number} Part Details
-                            </Link>
-                          </Box>
-                        )}
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography variant="body1" fontWeight="medium">
-                          {item.qty || '—'}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        {renderPriceColumn(item)}
-                      </TableCell>
-                      <TableCell align="center">
-                        {item.link && (
-                          <Button 
-                            variant="contained" 
-                            color="success"
-                            size="small"
-                            href={item.link}
-                            target="_blank"
-                            sx={{ 
-                              bgcolor: '#8BC34A',
-                              '&:hover': { bgcolor: '#7CB342' }
-                            }}
-                          >
-                            Buy Now
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
       )}
 
       {/* View 2: Group by Part Number */}
