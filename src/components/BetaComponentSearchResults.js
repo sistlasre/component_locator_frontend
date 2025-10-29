@@ -214,7 +214,7 @@ const BetaComponentSearchResults = () => {
 
                 return (
                   <Box key={supplierName} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
+                    <Box sx={{ p: 2, bgcolor: '#d3d3d3' }}>
                       <Grid container alignItems="center" justifyContent="space-between">
                         <Grid item>
                           <Typography variant="subtitle1" fontWeight="medium">
@@ -242,7 +242,7 @@ const BetaComponentSearchResults = () => {
 
                     <TableContainer>
                       <Table size="small">
-                        <TableHead>
+                        <TableHead sx={{ bgcolor: '#f7f7f7' }}>
                           <TableRow>
                             <TableCell>Manufacturer</TableCell>
                             <TableCell>Description / Details</TableCell>
