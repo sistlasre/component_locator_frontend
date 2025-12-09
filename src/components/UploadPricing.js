@@ -103,7 +103,7 @@ const UploadPricing = () => {
 
       // Success!
       setUploadSuccess(true);
-      setSuccessMessage('File uploaded successfully! Your pricing data has been submitted for processing.');
+      setSuccessMessage('File uploaded successfully! Your pricing data has been submitted for processing. You should receive an email once it is processed and downloadable.');
       
       // Reset form
       setFormData({
