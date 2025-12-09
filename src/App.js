@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 // Components
@@ -15,13 +15,16 @@ import LoggedOutRoute from './components/LoggedOutRoute';
 import UserSubscriptions from './components/UserSubscriptions';
 import BetaComponentLocator from './components/BetaComponentLocator';
 import BetaComponentSearchResults from './components/BetaComponentSearchResults';
+import UploadPricing from './components/UploadPricing';
 
 function Layout({ children }) {
+  const location = useLocation();
+  const dontShowHeaderAndFooter = location.pathname?.includes("raw");
   return (
     <div className="App d-flex flex-column min-vh-100" style={{ maxWidth: '90%', margin: 'auto', backgroundColor: '#fff' }}>
-      <Header />
+      {!dontShowHeaderAndFooter && <Header />}
       <main className="flex-grow-1">{children}</main>
-      <Footer />
+      {!dontShowHeaderAndFooter && <Footer />}
     </div>
   );
 }
@@ -38,6 +41,8 @@ function App() {
               <Route path="/supplier/register" element={<SupplierRegistration />} />
               <Route path="/beta" element={<BetaComponentLocator />} />
               <Route path="/beta-search" element={<BetaComponentSearchResults />} />
+              <Route path="/upload-pricing" element={<UploadPricing />} />
+              <Route path="/upload-pricing-raw" element={<UploadPricing />} />
               <Route path="/login" element={<LoggedOutRoute><Login /></LoggedOutRoute>} />
               <Route path="/register" element={<LoggedOutRoute><Register /></LoggedOutRoute>} />
             </Routes>
