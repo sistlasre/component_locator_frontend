@@ -1,58 +1,149 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert, Spinner, InputGroup } from 'react-bootstrap';
-import { Upload, CloudUpload, CheckCircle } from 'react-bootstrap-icons';
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Table } from 'react-bootstrap';
+import { Upload, CloudUpload, CheckCircle, FileEarmarkSpreadsheet } from 'react-bootstrap-icons';
 import axios from 'axios';
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 
 const UploadPricing = () => {
-  const [formData, setFormData] = useState({
-    email_address: '',
-    mpn_field: '',
-    mfr_field: '',
-    quantity_requested_field: ''
-  });
-
+  const [emailAddress, setEmailAddress] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [filePreview, setFilePreview] = useState(null);
+  const [columnMappings, setColumnMappings] = useState({});
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear any previous errors when user starts typing
-    setError('');
+  const parseCSV = (file) => {
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        if (results.data && results.data.length > 0) {
+          const headers = Object.keys(results.data[0]);
+          const preview = {
+            headers: headers,
+            rows: results.data.slice(0, 5)
+          };
+          setFilePreview(preview);
+          // Initialize empty mappings
+          setColumnMappings({});
+        } else {
+          setError('The file appears to be empty or invalid');
+        }
+      },
+      error: (error) => {
+        setError(`Error parsing CSV: ${error.message}`);
+      }
+    });
+  };
+
+  const parseExcel = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        if (jsonData.length > 0) {
+          const headers = jsonData[0];
+          const rows = jsonData.slice(1, 6).map(row => {
+            const rowObj = {};
+            headers.forEach((header, index) => {
+              rowObj[header] = row[index] || '';
+            });
+            return rowObj;
+          });
+
+          const preview = {
+            headers: headers,
+            rows: rows
+          };
+          setFilePreview(preview);
+          // Initialize empty mappings
+          setColumnMappings({});
+        } else {
+          setError('The file appears to be empty or invalid');
+        }
+      } catch (error) {
+        setError(`Error parsing Excel file: ${error.message}`);
+      }
+    };
+    reader.readAsArrayBuffer(file);
   };
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === 'text/csv') {
-      setSelectedFile(file);
-      setError('');
-    } else if (file) {
-      setError('Please select a valid CSV file');
+    if (!file) return;
+
+    const fileName = file.name.toLowerCase();
+    const isCSV = fileName.endsWith('.csv');
+    const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
+
+    if (!isCSV && !isExcel) {
+      setError('Please select a valid CSV or Excel file (.csv, .xlsx)');
       setSelectedFile(null);
+      setFilePreview(null);
+      return;
+    }
+
+    setSelectedFile(file);
+    setError('');
+    setFilePreview(null);
+    setColumnMappings({});
+
+    // Parse file to get preview
+    if (isCSV) {
+      parseCSV(file);
+    } else {
+      parseExcel(file);
     }
   };
 
+  const handleColumnMapping = (columnName, mappingType) => {
+    setColumnMappings(prev => {
+      const newMappings = { ...prev };
+
+      // Remove any previous mapping for this type
+      Object.keys(newMappings).forEach(key => {
+        if (newMappings[key] === mappingType) {
+          delete newMappings[key];
+        }
+      });
+
+      // Set new mapping if not "none"
+      if (mappingType !== 'none') {
+        newMappings[columnName] = mappingType;
+      }
+
+      return newMappings;
+    });
+  };
+
   const validateForm = () => {
-    if (!formData.email_address) {
+    if (!emailAddress) {
       setError('Email address is required');
       return false;
     }
-    
+
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email_address)) {
+    if (!emailRegex.test(emailAddress)) {
       setError('Please enter a valid email address');
       return false;
     }
 
     if (!selectedFile) {
-      setError('Please select a CSV file to upload');
+      setError('Please select a file to upload');
+      return false;
+    }
+
+    if (!filePreview) {
+      setError('File preview not available. Please select a file again.');
       return false;
     }
 
@@ -61,7 +152,7 @@ const UploadPricing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -72,15 +163,26 @@ const UploadPricing = () => {
     setUploadSuccess(false);
 
     try {
+      // Build the request payload with column mappings
+      const requestPayload = {
+        email_address: emailAddress
+      };
+
+      // Add column mappings based on user selections
+      Object.entries(columnMappings).forEach(([columnName, mappingType]) => {
+        if (mappingType === 'mpn') {
+          requestPayload.mpn_field = columnName;
+        } else if (mappingType === 'manufacturer') {
+          requestPayload.mfr_field = columnName;
+        } else if (mappingType === 'quantity') {
+          requestPayload.quantity_requested_field = columnName;
+        }
+      });
+
       // Step 1: Get presigned URL from the API
       const presignedUrlResponse = await axios.post(
         'https://obkg1pw61g.execute-api.us-west-2.amazonaws.com/prod/get-pricing-presigned-url',
-        {
-          email_address: formData.email_address,
-          mpn_field: formData.mpn_field || undefined,
-          mfr_field: formData.mfr_field || undefined,
-          quantity_requested_field: formData.quantity_requested_field || undefined
-        },
+        requestPayload,
         {
           headers: {
             'Content-Type': 'application/json'
@@ -94,26 +196,27 @@ const UploadPricing = () => {
         throw new Error('Failed to get upload URL');
       }
 
-      // Step 2: Upload the CSV file to S3 using the presigned URL
+      // Step 2: Upload the file to S3 using the presigned URL
+      const fileType = selectedFile.name.toLowerCase().endsWith('.csv') 
+        ? 'text/csv' 
+        : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
       await axios.put(presigned_url, selectedFile, {
         headers: {
-          'Content-Type': 'text/csv'
+          'Content-Type': fileType
         }
       });
 
       // Success!
       setUploadSuccess(true);
       setSuccessMessage('File uploaded successfully! Your pricing data has been submitted for processing. You should receive an email once it is processed and downloadable.');
-      
+
       // Reset form
-      setFormData({
-        email_address: '',
-        mpn_field: '',
-        mfr_field: '',
-        quantity_requested_field: ''
-      });
+      setEmailAddress('');
       setSelectedFile(null);
-      
+      setFilePreview(null);
+      setColumnMappings({});
+
       // Reset file input
       const fileInput = document.getElementById('csvFile');
       if (fileInput) {
@@ -122,7 +225,7 @@ const UploadPricing = () => {
 
     } catch (err) {
       console.error('Upload error:', err);
-      
+
       if (err.response?.data?.message) {
         setError(`Upload failed: ${err.response.data.message}`);
       } else if (err.message) {
@@ -146,7 +249,7 @@ const UploadPricing = () => {
                 Upload Pricing Data
               </h4>
             </Card.Header>
-            
+
             <Card.Body className="p-4">
               <Form onSubmit={handleSubmit}>
                 {/* Email Address (Required) */}
@@ -156,9 +259,11 @@ const UploadPricing = () => {
                   </Form.Label>
                   <Form.Control
                     type="email"
-                    name="email_address"
-                    value={formData.email_address}
-                    onChange={handleInputChange}
+                    value={emailAddress}
+                    onChange={(e) => {
+                      setEmailAddress(e.target.value);
+                      setError('');
+                    }}
                     placeholder="Enter your email address"
                     required
                     disabled={uploading}
@@ -168,100 +273,107 @@ const UploadPricing = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Optional Key-Value Mappings */}
-                <div className="mb-4">
-                  <h6 className="fw-semibold mb-3">Key-Value Mappings (Optional)</h6>
-                  <p className="text-muted small">
-                    Provide column mappings for your CSV file if they differ from the default names
-                  </p>
-
-                  <Row>
-                    <Col md={12} className="mb-3">
-                      <Form.Group>
-                        <Form.Label>MPN Field</Form.Label>
-                        <InputGroup>
-                          <InputGroup.Text className="bg-light">
-                            <small>Column:</small>
-                          </InputGroup.Text>
-                          <Form.Control
-                            type="text"
-                            name="mpn_field"
-                            value={formData.mpn_field}
-                            onChange={handleInputChange}
-                            placeholder="e.g., part_number"
-                            disabled={uploading}
-                          />
-                        </InputGroup>
-                      </Form.Group>
-                    </Col>
-
-                    <Col md={12} className="mb-3">
-                      <Form.Group>
-                        <Form.Label>Manufacturer Field</Form.Label>
-                        <InputGroup>
-                          <InputGroup.Text className="bg-light">
-                            <small>Column:</small>
-                          </InputGroup.Text>
-                          <Form.Control
-                            type="text"
-                            name="mfr_field"
-                            value={formData.mfr_field}
-                            onChange={handleInputChange}
-                            placeholder="e.g., manufacturer_name"
-                            disabled={uploading}
-                          />
-                        </InputGroup>
-                      </Form.Group>
-                    </Col>
-
-                    <Col md={12} className="mb-3">
-                      <Form.Group>
-                        <Form.Label>Quantity Requested Field</Form.Label>
-                        <InputGroup>
-                          <InputGroup.Text className="bg-light">
-                            <small>Column:</small>
-                          </InputGroup.Text>
-                          <Form.Control
-                            type="text"
-                            name="quantity_requested_field"
-                            value={formData.quantity_requested_field}
-                            onChange={handleInputChange}
-                            placeholder="e.g., qty_requested"
-                            disabled={uploading}
-                          />
-                        </InputGroup>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </div>
-
-                {/* CSV File Upload */}
+                {/* File Upload */}
                 <Form.Group className="mb-4">
                   <Form.Label className="fw-semibold">
-                    CSV File <span className="text-danger">*</span>
+                    Select File <span className="text-danger">*</span>
                   </Form.Label>
                   <div className="d-flex align-items-center">
                     <Form.Control
                       id="csvFile"
                       type="file"
-                      accept=".csv"
+                      accept=".csv,.xlsx,.xls"
                       onChange={handleFileSelect}
                       disabled={uploading}
                       className="me-2"
                     />
-                    {selectedFile && (
+                    {selectedFile && !error && (
                       <CheckCircle className="text-success" size={20} />
                     )}
                   </div>
                   {selectedFile && (
                     <Form.Text className="text-success d-block mt-2">
+                      <FileEarmarkSpreadsheet className="me-1" />
                       Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
                     </Form.Text>
                   )}
                   <Form.Text className="text-muted">
-                    Upload a CSV file containing your pricing data
+                    Upload a CSV file (.csv) containing your pricing data
                   </Form.Text>
                 </Form.Group>
+
+                {/* File Preview and Column Mapping */}
+                {filePreview && (
+                  <div className="mb-4">
+                    <h6 className="fw-semibold mb-3">File Preview & Column Mapping</h6>
+                    <p className="text-muted small mb-3">
+                      Select the purpose for each column from the dropdowns below (optional)
+                    </p>
+
+                    <div className="table-responsive border rounded">
+                      <Table className="mb-0" striped hover>
+                        <thead>
+                          <tr>
+                            {filePreview.headers.map((header, index) => (
+                              <th key={index} className="text-center">
+                                <Form.Select
+                                  size="sm"
+                                  className="mb-2"
+                                  value={
+                                    columnMappings[header] || 'none'
+                                  }
+                                  onChange={(e) => handleColumnMapping(header, e.target.value)}
+                                  disabled={uploading}
+                                >
+                                  <option value="none">-- Select --</option>
+                                  <option value="mpn">Part Number</option>
+                                  <option value="manufacturer">Manufacturer</option>
+                                  <option value="quantity">Quantity</option>
+                                </Form.Select>
+                                <div className="fw-normal text-muted small">{header}</div>
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filePreview.rows.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                              {filePreview.headers.map((header, colIndex) => (
+                                <td key={colIndex} className="small">
+                                  {row[header] || <span className="text-muted">-</span>}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                          {filePreview.rows.length === 0 && (
+                            <tr>
+                              <td colSpan={filePreview.headers.length} className="text-center text-muted">
+                                No data rows found in the file
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </Table>
+                    </div>
+
+                    {Object.keys(columnMappings).length > 0 && (
+                      <div className="mt-2">
+                        <small className="text-muted">
+                          <strong>Current mappings:</strong>{' '}
+                          {Object.entries(columnMappings).map(([col, type], index) => (
+                            <span key={col}>
+                              {index > 0 && ', '}
+                              <span className="text-primary">{col}</span> → {' '}
+                              {type === 'mpn' && 'Part Number'}
+                              {type === 'manufacturer' && 'Manufacturer'}
+                              {type === 'quantity' && 'Quantity'}
+                            </span>
+                          ))}
+                        </small>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Error Alert */}
                 {error && (
@@ -284,7 +396,7 @@ const UploadPricing = () => {
                     type="submit"
                     variant="primary"
                     size="lg"
-                    disabled={uploading || !selectedFile || !formData.email_address}
+                    disabled={uploading || !selectedFile || !emailAddress || !filePreview}
                     className="d-flex align-items-center justify-content-center"
                   >
                     {uploading ? (
@@ -310,11 +422,12 @@ const UploadPricing = () => {
               </Form>
 
               <div className="mt-4 p-3 bg-light rounded">
-                <h6 className="fw-semibold mb-2">CSV File Requirements:</h6>
+                <h6 className="fw-semibold mb-2">File Requirements:</h6>
                 <ul className="small mb-0">
                   <li>File must be in CSV format (.csv)</li>
                   <li>First row should contain column headers</li>
-                  <li>Include columns for MPN, Manufacturer, and Quantity as applicable</li>
+                  <li>Include columns for Part Number, Manufacturer, and Quantity as needed</li>
+                  <li>Map columns using the dropdowns in the preview table</li>
                 </ul>
               </div>
             </Card.Body>
