@@ -147,6 +147,17 @@ const UploadPricing = () => {
       return false;
     }
 
+    // Check for required column mappings
+    if (!Object.values(columnMappings).includes('mpn')) {
+      setError('Part Number (mpn) column is required');
+      return false;
+    }
+
+    if (!Object.values(columnMappings).includes('quantity')) {
+      setError('Quantity column is required');
+      return false;
+    }
+
     return true;
   };
 
@@ -179,6 +190,15 @@ const UploadPricing = () => {
         }
       });
 
+      const fileType = selectedFile.name.toLowerCase().endsWith('.csv')
+        ? 'text/csv'
+        : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      const fileExtension = selectedFile.name.toLowerCase().endsWith('.xlsx') ? 'xlsx' : 'csv';
+
+      // Now, add the file type and extensions as parameters we pass in
+      requestPayload.file_extension = fileExtension;
+      requestPayload.content_type = fileType;
+
       // Step 1: Get presigned URL from the API
       const presignedUrlResponse = await axios.post(
         'https://obkg1pw61g.execute-api.us-west-2.amazonaws.com/prod/get-pricing-presigned-url',
@@ -197,10 +217,6 @@ const UploadPricing = () => {
       }
 
       // Step 2: Upload the file to S3 using the presigned URL
-      const fileType = selectedFile.name.toLowerCase().endsWith('.csv') 
-        ? 'text/csv' 
-        : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
       await axios.put(presigned_url, selectedFile, {
         headers: {
           'Content-Type': fileType
