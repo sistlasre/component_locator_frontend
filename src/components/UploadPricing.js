@@ -183,8 +183,6 @@ const UploadPricing = () => {
       Object.entries(columnMappings).forEach(([columnName, mappingType]) => {
         if (mappingType === 'mpn') {
           requestPayload.mpn_field = columnName;
-        } else if (mappingType === 'manufacturer') {
-          requestPayload.mfr_field = columnName;
         } else if (mappingType === 'quantity') {
           requestPayload.quantity_requested_field = columnName;
         }
@@ -262,7 +260,7 @@ const UploadPricing = () => {
             <Card.Header className="bg-primary text-white py-3">
               <h4 className="mb-0 d-flex align-items-center">
                 <CloudUpload className="me-2" />
-                Upload Pricing Data
+                Upload Inventory to be Priced
               </h4>
             </Card.Header>
 
@@ -284,9 +282,6 @@ const UploadPricing = () => {
                     required
                     disabled={uploading}
                   />
-                  <Form.Text className="text-muted">
-                    We'll use this email to send you confirmation and updates
-                  </Form.Text>
                 </Form.Group>
 
                 {/* File Upload */}
@@ -314,7 +309,7 @@ const UploadPricing = () => {
                     </Form.Text>
                   )}
                   <Form.Text className="text-muted">
-                    Upload a CSV file (.csv) containing your pricing data
+                    Upload a CSV (.csv) or Excel (.xlsx) file containing the inventory you want priced
                   </Form.Text>
                 </Form.Group>
 
@@ -343,7 +338,6 @@ const UploadPricing = () => {
                                 >
                                   <option value="none">-- Select --</option>
                                   <option value="mpn">Part Number</option>
-                                  <option value="manufacturer">Manufacturer</option>
                                   <option value="quantity">Quantity</option>
                                 </Form.Select>
                                 <div className="fw-normal text-muted small">{header}</div>
@@ -381,7 +375,6 @@ const UploadPricing = () => {
                               {index > 0 && ', '}
                               <span className="text-primary">{col}</span> → {' '}
                               {type === 'mpn' && 'Part Number'}
-                              {type === 'manufacturer' && 'Manufacturer'}
                               {type === 'quantity' && 'Quantity'}
                             </span>
                           ))}
@@ -430,7 +423,7 @@ const UploadPricing = () => {
                     ) : (
                       <>
                         <Upload className="me-2" />
-                        Upload Pricing Data
+                        Upload Inventory to be Priced
                       </>
                     )}
                   </Button>
@@ -440,10 +433,9 @@ const UploadPricing = () => {
               <div className="mt-4 p-3 bg-light rounded">
                 <h6 className="fw-semibold mb-2">File Requirements:</h6>
                 <ul className="small mb-0">
-                  <li>File must be in CSV format (.csv)</li>
+                  <li>File must be a CSV (.csv) or Excel (.xlsx) file</li>
                   <li>First row should contain column headers</li>
-                  <li>Include columns for Part Number, Manufacturer, and Quantity as needed</li>
-                  <li>Map columns using the dropdowns in the preview table</li>
+                  <li>Specify the columns for Part Number and Quantity</li>
                 </ul>
               </div>
             </Card.Body>
