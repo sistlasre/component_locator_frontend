@@ -16,6 +16,7 @@ import UserSubscriptions from './components/UserSubscriptions';
 import BetaComponentLocator from './components/BetaComponentLocator';
 import BetaComponentSearchResults from './components/BetaComponentSearchResults';
 import UploadPricing from './components/UploadPricing';
+import UploadMpns from './components/UploadMpns';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -43,6 +44,8 @@ function App() {
               <Route path="/beta-search" element={<BetaComponentSearchResults />} />
               <Route path="/upload-pricing" element={<UploadPricing />} />
               <Route path="/upload-pricing-raw" element={<UploadPricing />} />
+              <Route path="/upload-mpns" element={<UploadMpns />} />
+              <Route path="/upload-mpns-raw" element={<UploadMpns />} />
               <Route path="/login" element={<LoggedOutRoute><Login /></LoggedOutRoute>} />
               <Route path="/register" element={<LoggedOutRoute><Register /></LoggedOutRoute>} />
             </Routes>
