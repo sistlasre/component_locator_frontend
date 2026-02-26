@@ -253,7 +253,7 @@ const UploadMpns = () => {
             <Card.Header className="bg-primary text-white py-3">
               <h4 className="mb-0 d-flex align-items-center">
                 <CloudUpload className="me-2" />
-                Upload Inventory to be Priced
+                Upload MPNs
               </h4>
             </Card.Header>
 
@@ -414,7 +414,7 @@ const UploadMpns = () => {
                     ) : (
                       <>
                         <Upload className="me-2" />
-                        Upload Inventory to be Priced
+                        Upload MPNs
                       </>
                     )}
                   </Button>
