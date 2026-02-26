@@ -9,6 +9,7 @@ const UploadMpns = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
+  const [columnMappings, setColumnMappings] = useState({});
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -26,6 +27,8 @@ const UploadMpns = () => {
             rows: results.data.slice(0, 5)
           };
           setFilePreview(preview);
+          // Initialize empty mappings
+          setColumnMappings({});
         } else {
           setError('The file appears to be empty or invalid');
         }
@@ -61,6 +64,8 @@ const UploadMpns = () => {
             rows: rows
           };
           setFilePreview(preview);
+          // Initialize empty mappings
+          setColumnMappings({});
         } else {
           setError('The file appears to be empty or invalid');
         }
@@ -89,6 +94,7 @@ const UploadMpns = () => {
     setSelectedFile(file);
     setError('');
     setFilePreview(null);
+    setColumnMappings({});
 
     // Parse file to get preview
     if (isCSV) {
@@ -96,6 +102,26 @@ const UploadMpns = () => {
     } else {
       parseExcel(file);
     }
+  };
+
+  const handleColumnMapping = (columnName, mappingType) => {
+    setColumnMappings(prev => {
+      const newMappings = { ...prev };
+
+      // Remove any previous mapping for this type
+      Object.keys(newMappings).forEach(key => {
+        if (newMappings[key] === mappingType) {
+          delete newMappings[key];
+        }
+      });
+
+      // Set new mapping if not "none"
+      if (mappingType !== 'none') {
+        newMappings[columnName] = mappingType;
+      }
+
+      return newMappings;
+    });
   };
 
   const validateForm = () => {
@@ -121,6 +147,12 @@ const UploadMpns = () => {
       return false;
     }
 
+    // Check for required column mappings
+    if (!Object.values(columnMappings).includes('mpn')) {
+      setError('MPN column is required');
+      return false;
+    }
+
     return true;
   };
 
@@ -141,6 +173,13 @@ const UploadMpns = () => {
       const requestPayload = {
         email_address: emailAddress
       };
+
+      // Add column mappings based on user selections
+      Object.entries(columnMappings).forEach(([columnName, mappingType]) => {
+        if (mappingType === 'mpn') {
+          requestPayload.mpn_field = columnName;
+        }
+      });
 
       const fileType = selectedFile.name.toLowerCase().endsWith('.csv')
         ? 'text/csv'
@@ -183,6 +222,7 @@ const UploadMpns = () => {
       setEmailAddress('');
       setSelectedFile(null);
       setFilePreview(null);
+      setColumnMappings({});
 
       // Reset file input
       const fileInput = document.getElementById('csvFile');
@@ -280,7 +320,19 @@ const UploadMpns = () => {
                           <tr>
                             {filePreview.headers.map((header, index) => (
                               <th key={index} className="text-center">
-                                <div className="fw-bold">{header}</div>
+                                <Form.Select
+                                  size="sm"
+                                  className="mb-2"
+                                  value={
+                                    columnMappings[header] || 'none'
+                                  }
+                                  onChange={(e) => handleColumnMapping(header, e.target.value)}
+                                  disabled={uploading}
+                                >
+                                  <option value="none">-- Select --</option>
+                                  <option value="mpn">MPN</option>
+                                </Form.Select>
+                                <div className="fw-normal text-muted small">{header}</div>
                               </th>
                             ))}
                           </tr>
@@ -305,6 +357,21 @@ const UploadMpns = () => {
                         </tbody>
                       </Table>
                     </div>
+
+                    {Object.keys(columnMappings).length > 0 && (
+                      <div className="mt-2">
+                        <small className="text-muted">
+                          <strong>Current mappings:</strong>{' '}
+                          {Object.entries(columnMappings).map(([col, type], index) => (
+                            <span key={col}>
+                              {index > 0 && ', '}
+                              <span className="text-primary">{col}</span> → {' '}
+                              {type === 'mpn' && 'MPN'}
+                            </span>
+                          ))}
+                        </small>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -359,6 +426,7 @@ const UploadMpns = () => {
                 <ul className="small mb-0">
                   <li>File must be a CSV (.csv) or Excel (.xlsx) file</li>
                   <li>First row should contain column headers</li>
+                  <li>Specify the column for MPN</li>
                 </ul>
               </div>
             </Card.Body>
